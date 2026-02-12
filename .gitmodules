@@ -1,0 +1,6 @@
+[submodule "third/Crow"]
+	path = third/Crow
+	url = https://github.com/CrowCpp/Crow.git
+[submodule "third/yalantinglibs"]
+	path = third/yalantinglibs
+	url = https://github.com/alibaba/yalantinglibs.git
