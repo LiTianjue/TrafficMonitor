@@ -42,3 +42,15 @@
 
 # Database files
 db.json
+
+# Build directories
+build/
+web/
+
+# IDE files
+.vscode/
+.idea/
+DevelopmentPlan/
+
+# Other
+/*.md
