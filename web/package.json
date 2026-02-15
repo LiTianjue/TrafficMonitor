@@ -1,0 +1,21 @@
+{
+  "name": "traffic-monitor-web",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "echarts": "^6.0.0",
+    "element-plus": "2.2.0",
+    "vue": "3.2.45",
+    "vue-router": "4.0.16"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "2.3.3",
+    "sass": "1.52.3",
+    "vite": "2.9.15"
+  }
+}
