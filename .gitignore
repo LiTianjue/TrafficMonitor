@@ -45,7 +45,6 @@ db.json
 
 # Build directories
 build/
-web/
 
 # IDE files
 .vscode/
