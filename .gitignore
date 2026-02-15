@@ -1,3 +1,7 @@
+# Web files
+web/node_modules/
+web/dist/
+
 # Prerequisites
 *.d
 
