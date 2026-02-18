@@ -6,6 +6,7 @@ import ConfigForm from './views/ConfigForm.vue'
 
 import DetectorConfig from './views/DetectorConfig.vue'
 import ChannelConfig from './views/ChannelConfig.vue'
+import AttributeConfig from './views/AttributeConfig.vue'
 import SchemeConfig from './views/SchemeConfig.vue'
 import TriggerConfig from './views/TriggerConfig.vue'
 import RealTimeStatus from './views/RealTimeStatus.vue'
@@ -46,8 +47,7 @@ const routes = [
   },
   {
       path: '/attributes',
-      component: ConfigTable,
-      props: { endpoint: '/TrafficAttrbuteTable', title: 'Attribute Configuration' },
+      component: AttributeConfig,
       meta: { requiresAuth: true }
   },
   {
