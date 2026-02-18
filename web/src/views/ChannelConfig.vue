@@ -4,6 +4,7 @@
       <h2>Channel Configuration</h2>
       <div>
         <el-button type="success" @click="saveData" :loading="saving">Save Changes</el-button>
+        <el-button type="info" @click="fetchAndSyncFromTSC" :loading="syncing">Sync from TSC</el-button>
         <el-button type="primary" @click="addItem">Add Channel</el-button>
       </div>
     </div>
@@ -64,7 +65,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { DeleteFilled } from '@element-plus/icons-vue'
 import { SignalLeft, SignalStraight, SignalRight, SignalRound, SignalUnknown } from '../components/TrafficIcons.js'
 
@@ -72,6 +73,8 @@ const endpoint = '/ChannelCtrlTable'
 const tableData = ref([])
 const loading = ref(false)
 const saving = ref(false)
+const syncing = ref(false)
+const tscConfig = ref({})
 
 const directionOptions = [
   { value: 1, label: '东' },
@@ -153,7 +156,58 @@ const saveData = async () => {
   }
 }
 
-onMounted(fetchData)
+const fetchAndSyncFromTSC = async () => {
+    if (tscConfig.value.type !== 0) {
+        ElMessage.warning('Sync from TSC is only available for 海康威视 (Type 0)')
+        return
+    }
+
+    syncing.value = true
+    try {
+        const res = await axios.get('/TSC/ChannelCtrlTable')
+        let data = res.data
+        if (typeof data === 'string') {
+            try { data = JSON.parse(data) } catch(e){}
+        }
+        
+        await ElMessageBox.confirm(
+            'This will overwrite your current local channel configurations with the data from the TSC. Continue?',
+            'Confirm Sync',
+            {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel',
+                type: 'warning',
+            }
+        )
+
+        tableData.value = Array.isArray(data) ? data : []
+        ElMessage.success('Sync completed')
+    } catch (e) {
+        if (e !== 'cancel') {
+            ElMessage.error('Failed to sync from TSC')
+        }
+    } finally {
+        syncing.value = false
+    }
+}
+
+const fetchTscConfig = async () => {
+    try {
+        const res = await axios.get('/TscConfig')
+        let data = res.data
+        if (typeof data === 'string') {
+            try { data = JSON.parse(data) } catch(e){}
+        }
+        tscConfig.value = data || {}
+    } catch (e) {
+        console.error('Failed to fetch TscConfig', e)
+    }
+}
+
+onMounted(() => {
+    fetchTscConfig()
+    fetchData()
+})
 </script>
 
 <style scoped>
