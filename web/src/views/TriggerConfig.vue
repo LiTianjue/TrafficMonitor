@@ -109,7 +109,8 @@ const fetchData = async () => {
     if (typeof schemes === 'string') {
         try { schemes = JSON.parse(schemes) } catch(e){}
     }
-    schemeOptions.value = Array.isArray(schemes) ? schemes : []
+    const tscSelfOption = { id: 0, desc: '信号机自控' }
+    schemeOptions.value = [tscSelfOption, ...(Array.isArray(schemes) ? schemes : [])]
 
     // Fetch Attributes for Reference
     const resAttrs = await axios.get('/TrafficAttrbuteTable')

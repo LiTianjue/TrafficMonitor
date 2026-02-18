@@ -100,7 +100,14 @@
 
       <el-table-column prop="mode" label="Mode" width="150">
         <template #default="scope">
-           <el-input-number v-model="scope.row.mode" size="small" controls-position="right"></el-input-number>
+           <el-select v-model="scope.row.mode" size="small" placeholder="Select">
+             <el-option
+               v-for="item in modeOptions"
+               :key="item.value"
+               :label="item.label"
+               :value="item.value"
+             />
+           </el-select>
         </template>
       </el-table-column>
 
@@ -134,6 +141,13 @@ const channelOptions = ref([])
 const directionMap = {
   1: '东', 2: '南', 3: '西', 4: '北', 5: '其他'
 }
+
+const modeOptions = [
+  { value: 0, label: '信号机自控' },
+  { value: 1, label: '智能感应' },
+  { value: 2, label: '智能半感应' },
+  { value: 3, label: '专家模式' }
+]
 
 const typeMap = {
   0: '未定义', 1: '左转', 2: '直行', 3: '右转', 4: '圆盘'
