@@ -1,350 +1,388 @@
 <template>
   <div class="realtime-container">
-    <!-- Left: Simulation Area -->
-    <div class="simulation-area">
-      <div class="intersection">
-        <!-- North Bound Lanes (Going North, located at Bottom) -->
-        <div class="lane-group group-north">
-            <div v-for="lane in getLanesByDir(4)" :key="lane.laneNo" class="lane vertical">
-                <div class="lane-content">
-                    <component :is="getTurnIcon(lane.turn)" class="signal-icon" :style="{ color: getStatusColor(lane.status) }" />
-                    <span class="car-num">{{ lane.carNum }}</span>
-                </div>
-            </div>
+    <!-- Top: Options Bar -->
+    <div class="options-bar">
+      <el-checkbox v-model="options.showLaneNo">显示车道号</el-checkbox>
+      <el-checkbox v-model="options.showCarNum">显示车辆数</el-checkbox>
+      <el-checkbox v-model="options.showStatus">显示车道状态</el-checkbox>
+      <el-checkbox v-model="options.reverseLane">车道逆序排列</el-checkbox>
+    </div>
+
+    <!-- Middle: Main Content -->
+    <div class="main-content">
+      <!-- Left: Intersection Area -->
+      <div class="intersection-area">
+        <!-- North Direction (Top) - rotation: 180 -->
+        <div class="direction-north">
+          <DirectionLane 
+            :dir="4" 
+            :lanes="northLanes" 
+            :rotation="180"
+            :show-lane-no="options.showLaneNo"
+            :show-car-num="options.showCarNum"
+            :show-status="options.showStatus"
+            :reverse-lane="options.reverseLane"
+          />
         </div>
 
-        <!-- South Bound Lanes (Going South, located at Top) -->
-        <div class="lane-group group-south">
-            <div v-for="lane in getLanesByDir(2)" :key="lane.laneNo" class="lane vertical">
-                <div class="lane-content down">
-                    <component :is="getTurnIcon(lane.turn)" class="signal-icon" :style="{ color: getStatusColor(lane.status) }" />
-                    <span class="car-num">{{ lane.carNum }}</span>
-                </div>
+        <!-- Center: East + West -->
+        <div class="center-row">
+          <!-- West Direction (Left) - rotation: 90 -->
+          <div class="direction-west">
+            <DirectionLane 
+              :dir="3" 
+              :lanes="westLanes" 
+              :rotation="90"
+              :show-lane-no="options.showLaneNo"
+              :show-car-num="options.showCarNum"
+              :show-status="options.showStatus"
+              :reverse-lane="options.reverseLane"
+            />
+          </div>
+
+          <!-- Center Intersection -->
+          <div class="intersection-center">
+            <div class="center-zone">
+              <span class="countdown">12</span>
             </div>
+          </div>
+
+          <!-- East Direction (Right) - rotation: 270 -->
+          <div class="direction-east">
+            <DirectionLane 
+              :dir="1" 
+              :lanes="eastLanes" 
+              :rotation="270"
+              :show-lane-no="options.showLaneNo"
+              :show-car-num="options.showCarNum"
+              :show-status="options.showStatus"
+              :reverse-lane="options.reverseLane"
+            />
+          </div>
         </div>
 
-        <!-- East Bound Lanes (Going East, located at Left) -->
-        <div class="lane-group group-east">
-            <div v-for="lane in getLanesByDir(1)" :key="lane.laneNo" class="lane horizontal">
-                <div class="lane-content">
-                    <component :is="getTurnIcon(lane.turn)" class="signal-icon" :style="{ color: getStatusColor(lane.status) }" />
-                    <span class="car-num">{{ lane.carNum }}</span>
-                </div>
-            </div>
+        <!-- South Direction (Bottom) - rotation: 0 -->
+        <div class="direction-south">
+          <DirectionLane 
+            :dir="2" 
+            :lanes="southLanes" 
+            :rotation="0"
+            :show-lane-no="options.showLaneNo"
+            :show-car-num="options.showCarNum"
+            :show-status="options.showStatus"
+            :reverse-lane="options.reverseLane"
+          />
         </div>
+      </div>
 
-        <!-- West Bound Lanes (Going West, located at Right) -->
-        <div class="lane-group group-west">
-            <div v-for="lane in getLanesByDir(3)" :key="lane.laneNo" class="lane horizontal">
-                <div class="lane-content right-to-left">
-                    <component :is="getTurnIcon(lane.turn)" class="signal-icon" :style="{ color: getStatusColor(lane.status) }" />
-                    <span class="car-num">{{ lane.carNum }}</span>
-                </div>
+      <!-- Right: Info Panel -->
+      <div class="info-panel">
+        <el-card class="info-card">
+          <div class="info-section">
+            <div class="info-title">系统信息</div>
+            <div class="info-item">
+              <span class="label">系统时间:</span>
+              <span class="value">{{ formatTime(statusData.utc) }}</span>
             </div>
-        </div>
-        
-        <!-- Center Box -->
-        <div class="center-zone"></div>
+            <div class="info-item">
+              <span class="label">UTC时间戳:</span>
+              <span class="value">{{ statusData.utc || '--' }}</span>
+            </div>
+          </div>
+
+          <el-divider />
+
+          <div class="info-section">
+            <div class="info-title">规则信息</div>
+            <div class="info-item">
+              <span class="label">规则描述:</span>
+              <span class="value">{{ statusData.rule?.desc || 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">控制类型:</span>
+              <span class="value">{{ getCtrlTypeLabel(statusData.rule?.ctrlType) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">控制模式:</span>
+              <span class="value">{{ getCtrlModeLabel(statusData.rule?.ctrlMode) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">持续时间:</span>
+              <span class="value">{{ statusData.rule?.durnation || 0 }}s</span>
+            </div>
+            <div class="info-item highlight">
+              <span class="label">剩余时间:</span>
+              <span class="value time-left">{{ statusData.rule?.left || 0 }}s</span>
+            </div>
+          </div>
+        </el-card>
       </div>
     </div>
 
-    <!-- Right: Info Panel -->
-    <div class="info-panel">
-      <el-card class="info-card">
-        <template #header>
-          <div class="card-header">
-            <span>System Status</span>
-            <el-tag type="success" effect="dark">Live</el-tag>
-          </div>
-        </template>
-        
-        <div class="info-item">
-            <span class="label">Time (UTC):</span>
-            <span class="value">{{ formatTime(statusData.utc) }}</span>
-        </div>
-
-        <el-divider content-position="left">Control Rule</el-divider>
-        
-        <div class="info-item">
-            <span class="label">Control ID:</span>
-            <span class="value">{{ statusData.rule?.ctrlId }}</span>
-        </div>
-        <div class="info-item">
-            <span class="label">Trigger ID:</span>
-            <span class="value">{{ statusData.rule?.triggerId }}</span>
-        </div>
-        <div class="info-item">
-            <span class="label">Description:</span>
-            <span class="value">{{ statusData.rule?.desc || 'N/A' }}</span>
-        </div>
-        <div class="info-item">
-            <span class="label">Type:</span>
-            <span class="value">{{ getCtrlTypeLabel(statusData.rule?.ctrlType) }}</span>
-        </div>
-        <div class="info-item">
-            <span class="label">Mode:</span>
-            <span class="value">{{ getCtrlModeLabel(statusData.rule?.ctrlMode) }}</span>
-        </div>
-        
-        <div class="info-item">
-            <span class="label">Duration:</span>
-            <span class="value">{{ statusData.rule?.durnation }}s</span>
-        </div>
-        <div class="info-item">
-            <span class="label">Time Left:</span>
-            <span class="value time-left">{{ statusData.rule?.left }}s</span>
-        </div>
-
-      </el-card>
+    <!-- Bottom: Reserved Area -->
+    <div class="reserved-area">
+      <div class="reserved-left">
+        <span class="reserved-label">预留</span>
+      </div>
+      <div class="reserved-right">
+        <span class="reserved-label">预留</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import axios from 'axios'
-import { SignalLeft, SignalStraight, SignalRight, SignalRound, SignalUnknown } from '../components/TrafficIcons.js'
+import DirectionLane from '../components/DirectionLane.vue'
 
 const statusData = ref({
-    utc: 0,
-    rule: {},
-    lanes: [],
-    channels: []
+  utc: 0,
+  rule: {},
+  lanes: [],
+  channels: []
 })
+
+const options = reactive({
+  showLaneNo: true,
+  showCarNum: true,
+  showStatus: true,
+  reverseLane: false
+})
+
+const northLanes = ref([
+  { laneNo: 1, turn: 1, status: 1, carNum: 2 },
+  { laneNo: 2, turn: 2, status: 2, carNum: 4 },
+  { laneNo: 3, turn: 4, status: 1, carNum: 1 }
+])
+
+const southLanes = ref([
+  { laneNo: 1, turn: 1, status: 2, carNum: 3 },
+  { laneNo: 2, turn: 2, status: 1, carNum: 5 },
+  { laneNo: 3, turn: 4, status: 2, carNum: 2 }
+])
+
+const eastLanes = ref([
+  { laneNo: 1, turn: 1, status: 1, carNum: 1 },
+  { laneNo: 2, turn: 2, status: 1, carNum: 3 }
+])
+
+const westLanes = ref([
+  { laneNo: 1, turn: 1, status: 2, carNum: 2 },
+  { laneNo: 2, turn: 2, status: 2, carNum: 4 },
+  { laneNo: 3, turn: 4, status: 2, carNum: 1 }
+])
 
 let timer = null
 
 const fetchData = async () => {
-    try {
-        const res = await axios.get('/PssRealTimeStatus')
-        let data = res.data
-        if (typeof data === 'string') {
-            try { data = JSON.parse(data) } catch(e) {}
-        }
-        statusData.value = data
-    } catch (e) {
-        console.error("Fetch status failed", e)
+  try {
+    const res = await axios.get('/PssRealTimeStatus')
+    let data = res.data
+    if (typeof data === 'string') {
+      try { data = JSON.parse(data) } catch(e) {}
     }
+    statusData.value = data
+    
+    if (data.lanes) {
+      northLanes.value = data.lanes.filter(l => l.dir === 4)
+      southLanes.value = data.lanes.filter(l => l.dir === 2)
+      eastLanes.value = data.lanes.filter(l => l.dir === 1)
+      westLanes.value = data.lanes.filter(l => l.dir === 3)
+    }
+  } catch (e) {
+    console.error("Fetch status failed", e)
+  }
 }
 
 onMounted(() => {
-    fetchData()
-    timer = setInterval(fetchData, 1000)
+  fetchData()
+  timer = setInterval(fetchData, 1000)
 })
 
 onUnmounted(() => {
-    if (timer) clearInterval(timer)
+  if (timer) clearInterval(timer)
 })
 
-// Helpers
-const getLanesByDir = (dir) => {
-    if (!statusData.value.lanes) return []
-    return statusData.value.lanes.filter(l => l.dir === dir).sort((a,b) => a.laneNo - b.laneNo)
-}
-
-const getTurnIcon = (turn) => {
-    // TurnType: 1=Left, 2=Straight, 4=Right
-    // Bitwise check
-    if (turn & 1) return SignalLeft
-    if (turn & 4) return SignalRight
-    if (turn & 2) return SignalStraight
-    return SignalUnknown
-}
-
-const getStatusColor = (status) => {
-    // 0 unknown, 1 green, 2 red, 3 yellow
-    switch(status) {
-        case 1: return '#2ecc71' // Green
-        case 2: return '#e74c3c' // Red
-        case 3: return '#f1c40f' // Yellow
-        default: return '#909399' // Grey
-    }
-}
-
 const formatTime = (utc) => {
-    if (!utc) return '--'
-    // Assuming utc is unix timestamp in seconds
-    return new Date(utc * 1000).toLocaleString()
+  if (!utc) return '--'
+  return new Date(utc * 1000).toLocaleString('zh-CN')
 }
 
 const getCtrlTypeLabel = (type) => {
-    const map = {
-        0: 'Local Control', 1: 'Local Trigger', 2: 'Client Control', 3: 'Web Control', 4: 'Platform Control'
-    }
-    return map[type] || 'Unknown'
+  const map = {
+    0: '本地时段控制', 1: '本地触发控制', 2: '客户端控制', 3: 'WEB客户端控制', 4: '平台控制'
+  }
+  return map[type] || '未知'
 }
 
 const getCtrlModeLabel = (mode) => {
-    const map = { 0: 'System', 1: 'Scheme', 2: 'Idle' }
-    return map[mode] || 'Unknown'
+  const map = { 0: '系统控制模式', 1: '方案模式', 2: '空闲模式' }
+  return map[mode] || '未知'
 }
-
 </script>
 
 <style scoped>
 .realtime-container {
-    display: flex;
-    height: calc(100vh - 60px); /* Adjust based on header height */
-    padding: 20px;
-    gap: 20px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 60px);
+  padding: 10px;
+  gap: 10px;
+  background-color: #f0f2f5;
 }
 
-.simulation-area {
-    flex: 1;
-    background-color: #34495e;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    min-width: 500px;
+.options-bar {
+  flex-shrink: 0;
+  height: 40px;
+  background-color: #fff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 30px;
 }
 
-.intersection {
-    width: 600px;
-    height: 600px;
-    position: relative;
-    background-color: #2c3e50; /* Dark road color */
-    /* Use clip-path or simple divs to make a cross shape? 
-       Actually, laying out lanes on a square canvas is easier.
-    */
+.main-content {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+  min-height: 0;
 }
 
-/* Lane Groups Positioning */
-.lane-group {
-    position: absolute;
-    display: flex;
-    background-color: #2c3e50;
+.intersection-area {
+  flex: 4;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
 }
 
-/* 
-Coordinates logic:
-Center is 50%, 50%.
-Road width approx 120px.
-*/
-
-/* North Group (Bottom of intersection, heading Up) */
-.group-north {
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 40%;
-    align-items: flex-start; /* Cars start from bottom */
-    border-right: 2px dashed #f1c40f; /* Divider line */
+.direction-north {
+  margin-bottom: 10px;
 }
 
-/* South Group (Top of intersection, heading Down) */
-.group-south {
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 40%;
-    align-items: flex-end; 
-    border-left: 2px dashed #f1c40f;
+.center-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* East Group (Left of intersection, heading Right) */
-.group-east {
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40%;
-    flex-direction: column;
-    border-bottom: 2px dashed #f1c40f;
+.direction-west,
+.direction-east {
+  display: flex;
+  align-items: center;
 }
 
-/* West Group (Right of intersection, heading Left) */
-.group-west {
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40%;
-    flex-direction: column;
-    border-top: 2px dashed #f1c40f;
+.direction-south {
+  margin-top: 10px;
 }
 
-.lane {
-    border: 1px solid #7f8c8d;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.lane.vertical {
-    width: 40px;
-    height: 100%;
-}
-
-.lane.horizontal {
-    height: 40px;
-    width: 100%;
-}
-
-.lane-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-}
-
-/* Rotate icons based on direction */
-.group-north .signal-icon { transform: rotate(0deg); }
-.group-south .signal-icon { transform: rotate(180deg); }
-.group-east .signal-icon { transform: rotate(90deg); }
-.group-west .signal-icon { transform: rotate(-90deg); }
-
-.car-num {
-    font-size: 12px;
-    color: #fff;
-    background: #333;
-    padding: 2px 5px;
-    border-radius: 4px;
+.intersection-center {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .center-zone {
-    position: absolute;
-    top: 40%;
-    left: 40%;
-    width: 20%;
-    height: 20%;
-    border: 1px dashed #95a5a6;
-    background: transparent;
+  width: 60px;
+  height: 60px;
+  background-color: #2d2d2d;
+  border: 2px solid #4a4a4a;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.countdown {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2ecc71;
 }
 
 .info-panel {
-    width: 350px;
+  flex: 2;
 }
 
 .info-card {
-    height: 100%;
+  height: 100%;
 }
 
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.info-card :deep(.el-card__body) {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-section {
+  margin-bottom: 10px;
+}
+
+.info-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #409eff;
 }
 
 .info-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 14px;
 }
 
-.label {
-    color: #606266;
-    font-weight: bold;
+.info-item .label {
+  color: #606266;
 }
 
-.value {
-    color: #303133;
+.info-item .value {
+  color: #303133;
+  font-weight: 500;
+}
+
+.info-item.highlight {
+  background-color: #f0f9ff;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 10px;
 }
 
 .time-left {
-    font-size: 24px;
-    font-weight: bold;
-    color: #409EFF;
+  font-size: 20px;
+  font-weight: bold;
+  color: #409eff;
+}
+
+.reserved-area {
+  flex-shrink: 0;
+  height: 60px;
+  display: flex;
+  gap: 10px;
+}
+
+.reserved-left,
+.reserved-right {
+  flex: 1;
+  background-color: #e8e8e8;
+  border: 2px dashed #bbb;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reserved-label {
+  color: #999;
+  font-size: 14px;
 }
 </style>
