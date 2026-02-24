@@ -9,9 +9,6 @@
     <div class="lanes-area">
       <!-- 对向车道（左侧，无具体数量，无白线） -->
       <div class="opposite-lane">
-        <div class="opposite-lane-content">
-          <span class="direction-label">{{ getDirectionLabel() }}</span>
-        </div>
       </div>
 
       <!-- 双黄线（中间） -->
@@ -185,8 +182,8 @@ const getStatusText = (status) => {
 }
 
 .channel-lane {
-  width: 50px;
-  height: 80px;
+  width: 35px;
+  height: 120px;
   background-color: #353535;
   border-top: 2px solid #fff;
   position: relative;
