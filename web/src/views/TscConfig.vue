@@ -1,9 +1,9 @@
 <template>
   <div class="config-form">
-    <h2>TSC Configuration</h2>
+    <h2>TSC配置</h2>
     <el-form :model="formData" label-width="150px" v-loading="loading">
-       <el-form-item label="Type" v-if="formData.type !== undefined">
-          <el-select v-model="formData.type" placeholder="Select Manufacturer">
+        <el-form-item label="类型" v-if="formData.type !== undefined">
+           <el-select v-model="formData.type" placeholder="选择厂家">
              <el-option
                v-for="item in manufacturerOptions"
                :key="item.value"
@@ -13,20 +13,20 @@
           </el-select>
        </el-form-item>
        
-       <el-form-item label="IP Address">
+        <el-form-item label="IP地址">
           <el-input v-model="formData.ip"></el-input>
        </el-form-item>
        
-       <el-form-item label="Port">
+        <el-form-item label="端口">
           <el-input-number v-model="formData.port" :min="1" :max="65535" controls-position="right"></el-input-number>
        </el-form-item>
        
-       <el-form-item label="Control Switch">
+        <el-form-item label="控制开关">
           <el-switch v-model="formData.controlSwitch"></el-switch>
        </el-form-item>
        
        <el-form-item>
-           <el-button type="primary" @click="saveData">Save Configuration</el-button>
+            <el-button type="primary" @click="saveData">保存配置</el-button>
        </el-form-item>
     </el-form>
   </div>
@@ -58,7 +58,7 @@ const fetchData = async () => {
         }
         formData.value = data
     } catch(e) {
-        ElMessage.error('Failed to load')
+        ElMessage.error('加载失败')
     } finally {
         loading.value = false
     }
@@ -68,9 +68,9 @@ const saveData = async () => {
     loading.value = true
     try {
         await axios.post(endpoint, formData.value)
-        ElMessage.success('Saved')
+        ElMessage.success('保存成功')
     } catch(e) {
-        ElMessage.error('Failed to save')
+        ElMessage.error('保存失败')
     } finally {
         loading.value = false
     }

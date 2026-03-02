@@ -1,11 +1,11 @@
 <template>
   <div class="detector-config">
     <div class="header">
-      <h2>Detector Configuration</h2>
+      <h2>检测器配置</h2>
       <div>
-        <el-button type="success" @click="saveData" :loading="saving">Save Changes</el-button>
-        <el-button type="info" @click="fetchAndSyncFromTSC" :loading="syncing">Sync from TSC</el-button>
-        <el-button type="primary" @click="addItem">Add Detector</el-button>
+        <el-button type="success" @click="saveData" :loading="saving">保存修改</el-button>
+        <el-button type="info" @click="fetchAndSyncFromTSC" :loading="syncing">从TSC同步</el-button>
+        <el-button type="primary" @click="addItem">添加检测器</el-button>
       </div>
     </div>
 
@@ -16,15 +16,15 @@
         </template>
       </el-table-column>
       
-      <el-table-column prop="desc" label="Description">
+      <el-table-column prop="desc" label="描述">
         <template #default="scope">
            <el-input v-model="scope.row.desc" size="small"></el-input>
         </template>
       </el-table-column>
 
-      <el-table-column prop="dir" label="Direction" width="120">
+      <el-table-column prop="dir" label="方向" width="120">
         <template #default="scope">
-           <el-select v-model="scope.row.dir" size="small" placeholder="Select" @change="handleDirectionChange(scope.row)">
+           <el-select v-model="scope.row.dir" size="small" placeholder="选择" @change="handleDirectionChange(scope.row)">
              <el-option
                v-for="item in directionOptions"
                :key="item.value"
@@ -35,13 +35,13 @@
         </template>
       </el-table-column>
       
-      <el-table-column prop="ip" label="IP Address" width="180">
+      <el-table-column prop="ip" label="IP地址" width="180">
         <template #default="scope">
            <el-input v-model="scope.row.ip" size="small"></el-input>
         </template>
       </el-table-column>
 
-      <el-table-column label="Actions" width="100" align="center">
+      <el-table-column label="操作" width="100" align="center">
         <template #default="scope">
           <el-button size="small" type="danger" icon="DeleteFilled" circle @click="handleDelete(scope.$index)"></el-button>
         </template>
@@ -87,7 +87,7 @@ const fetchTscConfig = async () => {
 const fetchAndSyncFromTSC = async () => {
     // Check if TSC is HIKVision before allowing sync
     if (tscConfig.value.type !== 0) {
-        ElMessage.warning('Sync from TSC is only available for 海康威视 (Type 0)')
+        ElMessage.warning('从TSC同步仅适用于海康威视 (Type 0)')
         return
     }
 
@@ -101,20 +101,19 @@ const fetchAndSyncFromTSC = async () => {
         
         // Confirmation dialog
         await ElMessageBox.confirm(
-            'This will overwrite your current local detector configurations with the data from the TSC. Continue?',
-            'Confirm Sync',
+            '这将用TSC的数据覆盖您当前的本地检测器配置。是否继续?',
+            '确认同步',
             {
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancel',
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
                 type: 'warning',
             }
         )
 
-        // Apply the fetched data (normalize IDs for consistency)
         tableData.value = normalizeIds(data)
-        ElMessage.success('Sync from TSC completed successfully')
+        ElMessage.success('从TSC同步成功')
     } catch(e) {
-        ElMessage.error('Failed to sync from TSC')
+        ElMessage.error('从TSC同步失败')
     } finally {
         syncing.value = false
     }
@@ -129,7 +128,7 @@ const handleDirectionChange = (row) => {
     const dirOption = directionOptions.find(opt => opt.value === row.dir)
     if (!dirOption) return
 
-    const defaultDesc = 'New Detector'
+    const defaultDesc = '新检测器'
     // If description is empty or equals to default, update it
     if (!row.desc || row.desc === defaultDesc) {
         row.desc = `${dirOption.label}方向检测器`
@@ -156,7 +155,7 @@ const fetchData = async () => {
     }
     tableData.value = Array.isArray(data) ? normalizeIds(data) : []
   } catch (e) {
-    ElMessage.error('Failed to fetch data')
+    ElMessage.error('加载数据失败')
   } finally {
     loading.value = false
   }
@@ -173,8 +172,8 @@ const addItem = () => {
   })
 
   const newDetector = {
-      id: maxId + 1, // Will be the new max ID
-      desc: 'New Detector',
+      id: maxId + 1,
+      desc: '新检测器',
       dir: 1,
       ip: '0.0.0.0'
   }
@@ -195,14 +194,14 @@ const saveData = async () => {
       
       // Validate IP format
       if (!isValidIP(row.ip)) {
-          ElMessage.error(`Row ${i + 1}: Invalid IP address "${row.ip}"`)
+          ElMessage.error(`第 ${i + 1} 行: IP地址格式错误 "${row.ip}"`)
           saving.value = false
           return
       }
 
       // Validate IP uniqueness
       if (ipSet.has(row.ip)) {
-          ElMessage.error(`Row ${i + 1}: Duplicate IP address "${row.ip}"`)
+          ElMessage.error(`第 ${i + 1} 行: IP地址重复 "${row.ip}"`)
           saving.value = false
           return
       }
@@ -217,11 +216,11 @@ const saveData = async () => {
 
   try {
     await axios.post(endpoint, finalData)
-    ElMessage.success('Saved successfully')
+    ElMessage.success('保存成功')
     // Reload to display the corrected IDs
     await fetchData()
   } catch (e) {
-    ElMessage.error('Failed to save')
+    ElMessage.error('保存失败')
   } finally {
     saving.value = false
   }

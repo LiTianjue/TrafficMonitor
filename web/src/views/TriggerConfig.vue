@@ -3,25 +3,25 @@
     <!-- Attributes Reference Section -->
     <div class="reference-section">
         <div class="reference-header" @click="showAttributes = !showAttributes">
-            <h3><el-icon><InfoFilled /></el-icon> Traffic Attributes Reference</h3>
+            <h3><el-icon><InfoFilled /></el-icon> 交通属性参考</h3>
             <el-icon class="arrow-icon" :class="{ 'is-active': showAttributes }"><ArrowRight /></el-icon>
         </div>
         <el-collapse-transition>
             <div v-show="showAttributes" class="reference-content">
                 <el-table :data="attributesData" size="small" border max-height="300" stripe>
                     <el-table-column prop="id" label="ID" width="80" sortable />
-                    <el-table-column prop="tag" label="Tag" width="150" sortable />
-                    <el-table-column prop="desc" label="Description" />
+                    <el-table-column prop="tag" label="标签" width="150" sortable />
+                    <el-table-column prop="desc" label="描述" />
                 </el-table>
             </div>
         </el-collapse-transition>
     </div>
 
     <div class="header">
-      <h2>Trigger Configuration</h2>
+      <h2>触发器配置</h2>
       <div>
-        <el-button type="success" @click="saveData" :loading="saving">Save Changes</el-button>
-        <el-button type="primary" @click="addItem">Add Trigger</el-button>
+        <el-button type="success" @click="saveData" :loading="saving">保存修改</el-button>
+        <el-button type="primary" @click="addItem">添加触发器</el-button>
       </div>
     </div>
 
@@ -32,16 +32,16 @@
         </template>
       </el-table-column>
       
-      <el-table-column prop="desc" label="Description" width="200">
+      <el-table-column prop="desc" label="描述" width="200">
         <template #default="scope">
            <el-input v-model="scope.row.desc" size="small"></el-input>
         </template>
       </el-table-column>
 
-      <el-table-column prop="prio" label="Priority" width="120">
+      <el-table-column prop="prio" label="优先级" width="120">
         <template #header>
-          <span>Priority</span>
-          <el-tooltip content="0 is highest priority, 255 is lowest" placement="top">
+          <span>优先级</span>
+          <el-tooltip content="0为最高优先级，255为最低" placement="top">
             <el-icon style="margin-left: 4px; vertical-align: middle; cursor: help"><InfoFilled /></el-icon>
           </el-tooltip>
         </template>
@@ -50,9 +50,9 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="schemeId" label="Scheme" width="250">
+      <el-table-column prop="schemeId" label="方案" width="250">
         <template #default="scope">
-           <el-select v-model="scope.row.schemeId" size="small" placeholder="Select Scheme">
+           <el-select v-model="scope.row.schemeId" size="small" placeholder="选择方案">
              <el-option
                v-for="scheme in schemeOptions"
                :key="scheme.id"
@@ -63,13 +63,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="expr" label="Expression">
+      <el-table-column prop="expr" label="表达式">
         <template #default="scope">
-           <el-input v-model="scope.row.expr" size="small" placeholder="e.g. T1 > 0 AND HOUR > 6"></el-input>
+           <el-input v-model="scope.row.expr" size="small" placeholder="例如: T1 > 0 AND HOUR > 6"></el-input>
         </template>
       </el-table-column>
 
-      <el-table-column label="Actions" width="100" align="center">
+      <el-table-column label="操作" width="100" align="center">
         <template #default="scope">
           <el-button size="small" type="danger" :icon="DeleteFilled" circle @click="handleDelete(scope.$index)"></el-button>
         </template>
@@ -121,7 +121,7 @@ const fetchData = async () => {
     attributesData.value = Array.isArray(attrs) ? attrs : []
 
   } catch (e) {
-    ElMessage.error('Failed to fetch data')
+    ElMessage.error('加载数据失败')
   } finally {
     loading.value = false
   }
@@ -133,7 +133,7 @@ const addItem = () => {
   
   tableData.value.push({
       id: maxId + 1,
-      desc: 'New Trigger',
+      desc: '新触发器',
       prio: 1,
       schemeId: null,
       expr: ''
@@ -152,7 +152,7 @@ const saveData = async () => {
   for (let i = 0; i < tableData.value.length; i++) {
       const row = tableData.value[i]
       if (idSet.has(row.id)) {
-          ElMessage.error(`Row ${i + 1}: Duplicate Trigger ID "${row.id}"`)
+          ElMessage.error(`第 ${i + 1} 行: 触发器ID重复 "${row.id}"`)
           saving.value = false
           return
       }
@@ -161,9 +161,9 @@ const saveData = async () => {
 
   try {
     await axios.post(endpoint, tableData.value)
-    ElMessage.success('Saved successfully')
+    ElMessage.success('保存成功')
   } catch (e) {
-    ElMessage.error('Failed to save')
+    ElMessage.error('保存失败')
   } finally {
     saving.value = false
   }

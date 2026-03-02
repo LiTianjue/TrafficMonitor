@@ -5,8 +5,8 @@
   <el-container v-else style="height: 100vh">
     <el-aside :width="isCollapse ? '64px' : '220px'" class="sidebar-container">
       <div class="logo-container" :class="{ 'collapsed': isCollapse }">
-        <span v-if="!isCollapse">Traffic Monitor</span>
-        <span v-else>TM</span>
+        <span v-if="!isCollapse">交通信号控制器</span>
+        <span v-else>信号</span>
       </div>
       
       <el-menu
@@ -21,58 +21,58 @@
       >
         <el-menu-item index="/">
           <el-icon><Odometer /></el-icon>
-          <template #title>Dashboard</template>
+          <template #title>仪表盘</template>
         </el-menu-item>
         
         <el-menu-item index="/realtime">
           <el-icon><VideoPlay /></el-icon>
-          <template #title>Real-Time Status</template>
+          <template #title>实时状态</template>
         </el-menu-item>
 
         <el-menu-item index="/monitor">
           <el-icon><DataLine /></el-icon>
-          <template #title>Monitor Query</template>
+          <template #title>监控查询</template>
         </el-menu-item>
 
         <el-sub-menu index="/config">
             <template #title>
                 <el-icon><Tools /></el-icon>
-                <span>Configuration</span>
+                <span>系统配置</span>
             </template>
             
             <el-menu-item index="/tsc">
                 <el-icon><Setting /></el-icon>
-                <template #title>TSC Config</template>
+                <template #title>信号机配置</template>
             </el-menu-item>
 
             <el-menu-item index="/detectors">
                 <el-icon><Aim /></el-icon>
-                <template #title>Detectors</template>
+                <template #title>检测器配置</template>
             </el-menu-item>
 
             <el-menu-item index="/channels">
                 <el-icon><Connection /></el-icon>
-                <template #title>Channels</template>
+                <template #title>通道配置</template>
             </el-menu-item>
 
             <el-menu-item index="/attributes">
                 <el-icon><Document /></el-icon>
-                <template #title>Attributes</template>
+                <template #title>属性配置</template>
             </el-menu-item>
 
             <el-menu-item index="/schemes">
                 <el-icon><Files /></el-icon>
-                <template #title>Schemes</template>
+                <template #title>方案配置</template>
             </el-menu-item>
 
             <el-menu-item index="/triggers">
                 <el-icon><SwitchButton /></el-icon>
-                <template #title>Triggers</template>
+                <template #title>触发器配置</template>
             </el-menu-item>
 
             <el-menu-item index="/manual">
                 <el-icon><Operation /></el-icon>
-                <template #title>Manual Relations</template>
+                <template #title>手动控制</template>
             </el-menu-item>
         </el-sub-menu>
       </el-menu>
@@ -85,19 +85,19 @@
                 <component :is="isCollapse ? Expand : Fold" />
             </el-icon>
             <el-breadcrumb separator="/" class="breadcrumb">
-                <el-breadcrumb-item :to="{ path: '/' }">Home</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
                 <el-breadcrumb-item>{{ currentRouteName }}</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="navbar-right">
             <el-dropdown trigger="click" @command="handleCommand">
                 <div class="avatar-wrapper">
-                    <span class="username">Admin</span>
+                    <span class="username">管理员</span>
                     <el-icon><CaretBottom /></el-icon>
                 </div>
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item command="logout">Logout</el-dropdown-item>
+                        <el-dropdown-item command="logout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
@@ -130,13 +130,18 @@ const isLoginPage = computed(() => route.path === '/login')
 const isCollapse = ref(false)
 
 const currentRouteName = computed(() => {
-    // Simple mapping or route.name if defined
     const path = route.path
-    if (path === '/') return 'Dashboard'
-    if (path === '/realtime') return 'Real-Time Status'
-    if (path === '/monitor') return 'Monitor Query'
-    // ... basic fallback
-    return path.substring(1).charAt(0).toUpperCase() + path.substring(2)
+    if (path === '/') return '仪表盘'
+    if (path === '/realtime') return '实时状态'
+    if (path === '/monitor') return '监控查询'
+    if (path === '/tsc') return '信号机配置'
+    if (path === '/detectors') return '检测器配置'
+    if (path === '/channels') return '通道配置'
+    if (path === '/attributes') return '属性配置'
+    if (path === '/schemes') return '方案配置'
+    if (path === '/triggers') return '触发器配置'
+    if (path === '/manual') return '手动控制'
+    return '系统配置'
 })
 
 const toggleCollapse = () => {

@@ -1,34 +1,34 @@
 <template>
   <div class="attribute-config">
     <div class="header">
-      <h2>Attribute Configuration</h2>
+      <h2>属性配置</h2>
       <div>
-        <el-button type="success" @click="saveData" :loading="saving">Save Changes</el-button>
-        <el-button type="primary" @click="addItem">Add Item</el-button>
+        <el-button type="success" @click="saveData" :loading="saving">保存修改</el-button>
+        <el-button type="primary" @click="addItem">添加</el-button>
       </div>
     </div>
 
     <el-table :data="tableData" style="width: 100%" v-loading="loading" border>
       <el-table-column prop="id" label="ID" width="60" />
 
-      <el-table-column prop="desc" label="Description" width="120">
+      <el-table-column prop="desc" label="描述" width="120">
         <template #default="scope">
           <el-input v-model="scope.row.desc" size="small" @change="handleChange"></el-input>
         </template>
       </el-table-column>
 
-      <el-table-column prop="tag" label="Tag" width="120">
+      <el-table-column prop="tag" label="标签" width="120">
         <template #default="scope">
           <el-input v-model="scope.row.tag" size="small" @change="handleChange"></el-input>
         </template>
       </el-table-column>
 
-      <el-table-column prop="dataSourceIP" label="Data Source IP" width="150">
+      <el-table-column prop="dataSourceIP" label="数据源IP" width="150">
         <template #default="scope">
           <el-select 
             v-model="scope.row.dataSourceIP" 
             size="small" 
-            placeholder="Select"
+            placeholder="选择"
             :class="getSelectClass(scope.row.dataSourceIP, '')"
             @change="handleChange"
           >
@@ -43,12 +43,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="laneId" label="Lane No." width="100">
+      <el-table-column prop="laneId" label="车道号" width="100">
         <template #default="scope">
           <el-select 
             v-model="scope.row.laneId" 
             size="small" 
-            placeholder="Select"
+            placeholder="选择"
             :class="getSelectClass(scope.row.laneId, -1)"
             @change="handleChange"
           >
@@ -58,12 +58,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="regionId" label="Region No." width="100">
+      <el-table-column prop="regionId" label="区域号" width="100">
         <template #default="scope">
           <el-select 
             v-model="scope.row.regionId" 
             size="small" 
-            placeholder="Select"
+            placeholder="选择"
             :class="getSelectClass(scope.row.regionId, -1)"
             @change="handleChange"
           >
@@ -73,12 +73,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="laneType" label="Lane Type" width="100">
+      <el-table-column prop="laneType" label="车道类型" width="100">
         <template #default="scope">
           <el-select 
             v-model="scope.row.laneType" 
             size="small" 
-            placeholder="Select"
+            placeholder="选择"
             :class="getSelectClass(scope.row.laneType, -1)"
             @change="handleChange"
           >
@@ -89,12 +89,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="laneTurn" label="Turn" width="120">
+      <el-table-column prop="laneTurn" label="转向" width="120">
         <template #default="scope">
           <el-select 
             v-model="scope.row.laneTurn" 
             size="small" 
-            placeholder="Select"
+            placeholder="选择"
             :class="getSelectClass(scope.row.laneTurn, 0)"
             @change="handleChange"
           >
@@ -106,12 +106,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="signalLightId" label="Channel No." width="150">
+      <el-table-column prop="signalLightId" label="通道号" width="150">
         <template #default="scope">
           <el-select 
             v-model="scope.row.signalLightId" 
             size="small" 
-            placeholder="Select"
+            placeholder="选择"
             :class="getSelectClass(scope.row.signalLightId, -1)"
             @change="handleChange"
           >
@@ -126,12 +126,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="attribute" label="Attribute" width="160">
+      <el-table-column prop="attribute" label="属性" width="160">
         <template #default="scope">
           <el-select 
             v-model="scope.row.attribute" 
             size="small" 
-            placeholder="Select"
+            placeholder="选择"
             @change="handleChange"
           >
             <el-option 
@@ -144,7 +144,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="timeWindowSeconds" label="Time Window" width="100">
+      <el-table-column prop="timeWindowSeconds" label="时间窗口" width="100">
         <template #default="scope">
           <el-input-number 
             v-model="scope.row.timeWindowSeconds" 
@@ -157,12 +157,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="returnType" label="Return Type" width="120">
+      <el-table-column prop="returnType" label="返回类型" width="120">
         <template #default="scope">
           <el-select 
             v-model="scope.row.returnType" 
             size="small" 
-            placeholder="Select"
+            placeholder="选择"
             @change="handleChange"
           >
             <el-option 
@@ -175,7 +175,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Tag Value" width="120" align="center">
+      <el-table-column label="标签值" width="120" align="center">
         <template #default="scope">
           <el-button 
             size="small" 
@@ -183,12 +183,12 @@
             :loading="scope.row.loading"
             @click="fetchTagValue(scope.$index, scope.row)"
           >
-            {{ scope.row.tagValue !== undefined ? scope.row.tagValue : 'Fetch' }}
+            {{ scope.row.tagValue !== undefined ? scope.row.tagValue : '获取' }}
           </el-button>
         </template>
       </el-table-column>
 
-      <el-table-column label="Actions" width="80" align="center">
+      <el-table-column label="操作" width="80" align="center">
         <template #default="scope">
           <el-button size="small" type="danger" circle @click="handleDelete(scope.$index)">
             <el-icon><DeleteFilled /></el-icon>
@@ -304,7 +304,7 @@ const fetchData = async () => {
       tagValue: undefined
     })) : []
   } catch (e) {
-    ElMessage.error('Failed to fetch data')
+    ElMessage.error('加载数据失败')
   } finally {
     loading.value = false
   }
@@ -360,7 +360,7 @@ const validateData = () => {
     
     if (row.desc) {
       if (descSet.has(row.desc)) {
-        ElMessage.error(`Row ${i + 1}: Duplicate description "${row.desc}"`)
+        ElMessage.error(`第 ${i + 1} 行: 描述重复 "${row.desc}"`)
         return false
       }
       descSet.add(row.desc)
@@ -368,7 +368,7 @@ const validateData = () => {
     
     if (row.tag) {
       if (tagSet.has(row.tag)) {
-        ElMessage.error(`Row ${i + 1}: Duplicate tag "${row.tag}"`)
+        ElMessage.error(`第 ${i + 1} 行: 标签重复 "${row.tag}"`)
         return false
       }
       tagSet.add(row.tag)
@@ -385,9 +385,9 @@ const saveData = async () => {
   saving.value = true
   try {
     await axios.post(endpoint, tableData.value)
-    ElMessage.success('Saved successfully')
+    ElMessage.success('保存成功')
   } catch (e) {
-    ElMessage.error('Failed to save')
+    ElMessage.error('保存失败')
   } finally {
     saving.value = false
   }
@@ -395,7 +395,7 @@ const saveData = async () => {
 
 const fetchTagValue = async (index, row) => {
   if (!row.tag) {
-    ElMessage.warning('Tag is empty')
+    ElMessage.warning('标签为空')
     return
   }
 
@@ -414,7 +414,7 @@ const fetchTagValue = async (index, row) => {
   } catch (e) {
     tableData.value[index].tagValue = 'Error'
     tableData.value[index].tagStatus = 'error'
-    ElMessage.error('Failed to fetch tag value')
+    ElMessage.error('获取标签值失败')
   } finally {
     tableData.value[index].loading = false
   }

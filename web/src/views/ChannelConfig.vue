@@ -1,11 +1,11 @@
 <template>
   <div class="channel-config">
     <div class="header">
-      <h2>Channel Configuration</h2>
+      <h2>通道配置</h2>
       <div>
-        <el-button type="success" @click="saveData" :loading="saving">Save Changes</el-button>
-        <el-button type="info" @click="fetchAndSyncFromTSC" :loading="syncing">Sync from TSC</el-button>
-        <el-button type="primary" @click="addItem">Add Channel</el-button>
+        <el-button type="success" @click="saveData" :loading="saving">保存修改</el-button>
+        <el-button type="info" @click="fetchAndSyncFromTSC" :loading="syncing">从TSC同步</el-button>
+        <el-button type="primary" @click="addItem">添加通道</el-button>
       </div>
     </div>
 
@@ -16,9 +16,9 @@
         </template>
       </el-table-column>
       
-      <el-table-column prop="dir" label="Direction" width="150">
+      <el-table-column prop="dir" label="方向" width="150">
         <template #default="scope">
-           <el-select v-model="scope.row.dir" size="small" placeholder="Select">
+           <el-select v-model="scope.row.dir" size="small" placeholder="选择">
              <el-option
                v-for="item in directionOptions"
                :key="item.value"
@@ -29,9 +29,9 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="type" label="Type">
+      <el-table-column prop="type" label="类型">
         <template #default="scope">
-           <el-select v-model="scope.row.type" size="small" placeholder="Select Type">
+           <el-select v-model="scope.row.type" size="small" placeholder="选择类型">
              <el-option
                v-for="item in typeOptions"
                :key="item.value"
@@ -53,7 +53,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Actions" width="100" align="center">
+      <el-table-column label="操作" width="100" align="center">
         <template #default="scope">
           <el-button size="small" type="danger" :icon="DeleteFilled" circle @click="handleDelete(scope.$index)"></el-button>
         </template>
@@ -107,7 +107,7 @@ const fetchData = async () => {
     }
     tableData.value = Array.isArray(data) ? data : []
   } catch (e) {
-    ElMessage.error('Failed to fetch data')
+    ElMessage.error('加载数据失败')
   } finally {
     loading.value = false
   }
@@ -139,7 +139,7 @@ const saveData = async () => {
   for (let i = 0; i < tableData.value.length; i++) {
       const row = tableData.value[i]
       if (idSet.has(row.id)) {
-          ElMessage.error(`Row ${i + 1}: Duplicate Channel ID "${row.id}"`)
+          ElMessage.error(`第 ${i + 1} 行: 通道ID重复 "${row.id}"`)
           saving.value = false
           return
       }
@@ -148,9 +148,9 @@ const saveData = async () => {
 
   try {
     await axios.post(endpoint, tableData.value)
-    ElMessage.success('Saved successfully')
+    ElMessage.success('保存成功')
   } catch (e) {
-    ElMessage.error('Failed to save')
+    ElMessage.error('保存失败')
   } finally {
     saving.value = false
   }
@@ -158,7 +158,7 @@ const saveData = async () => {
 
 const fetchAndSyncFromTSC = async () => {
     if (tscConfig.value.type !== 0) {
-        ElMessage.warning('Sync from TSC is only available for 海康威视 (Type 0)')
+        ElMessage.warning('从TSC同步仅适用于海康威视 (Type 0)')
         return
     }
 
@@ -171,20 +171,20 @@ const fetchAndSyncFromTSC = async () => {
         }
         
         await ElMessageBox.confirm(
-            'This will overwrite your current local channel configurations with the data from the TSC. Continue?',
-            'Confirm Sync',
+            '这将用TSC的数据覆盖您当前的本地通道配置。是否继续?',
+            '确认同步',
             {
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancel',
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
                 type: 'warning',
             }
         )
 
         tableData.value = Array.isArray(data) ? data : []
-        ElMessage.success('Sync completed')
+        ElMessage.success('同步成功')
     } catch (e) {
         if (e !== 'cancel') {
-            ElMessage.error('Failed to sync from TSC')
+            ElMessage.error('从TSC同步失败')
         }
     } finally {
         syncing.value = false

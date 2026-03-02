@@ -32,21 +32,25 @@ YLT_REFL(QueryParam,beginTime,endTime,queryType);
 
 struct QueryReturnDatas
 {
-	uint32_t beginTime;
-	uint32_t endTime;
-    int		queryType;
-    std::string desc;
+	uint32_t beginTime;	//数据开始时间
+	uint32_t endTime;	//数据结束时间
+    int		queryType;	//查询返回的数据类型
+    std::string desc;	//查询返回的数据描述
 
 	struct Data
 	{
-		uint32_t timestamp;
+		uint32_t timestamp;	//时间戳utc
+#if 0
         double value;
-		uint8_t flag;
+#else
+		uint64_t value;		//数据值			
+#endif
+		uint8_t flag = 0;	//数据标记，0表示正常	
 	};
 	struct Table
 	{
-		std::string name;
-		std::vector<Data> datas;
+		std::string name;		//数据项名称
+		std::vector<Data> datas;//数据	
 	};
 
 	std::string unit;

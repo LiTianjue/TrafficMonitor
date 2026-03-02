@@ -3,40 +3,40 @@
     <!-- Attributes Reference Section -->
     <div class="reference-section">
         <div class="reference-header" @click="showAttributes = !showAttributes">
-            <h3><el-icon><InfoFilled /></el-icon> Traffic Attributes Reference</h3>
+            <h3><el-icon><InfoFilled /></el-icon> 交通属性参考</h3>
             <el-icon class="arrow-icon" :class="{ 'is-active': showAttributes }"><ArrowRight /></el-icon>
         </div>
         <el-collapse-transition>
             <div v-show="showAttributes" class="reference-content">
                 <el-table :data="attributesData" size="small" border max-height="300" stripe>
                     <el-table-column prop="id" label="ID" width="80" sortable />
-                    <el-table-column prop="tag" label="Tag" width="150" sortable />
-                    <el-table-column prop="desc" label="Description" />
+                    <el-table-column prop="tag" label="标签" width="150" sortable />
+                    <el-table-column prop="desc" label="描述" />
                 </el-table>
             </div>
         </el-collapse-transition>
     </div>
 
     <div class="header">
-      <h2>Scheme Configuration</h2>
+      <h2>方案配置</h2>
       <div>
-        <el-button type="success" @click="saveData" :loading="saving">Save Changes</el-button>
-        <el-button type="primary" @click="addItem">Add Scheme</el-button>
+        <el-button type="success" @click="saveData" :loading="saving">保存修改</el-button>
+        <el-button type="primary" @click="addItem">添加方案</el-button>
       </div>
     </div>
 
     <el-table :data="tableData" style="width: 100%" v-loading="loading" border row-key="id">
       <el-table-column type="expand">
         <template #default="props">
-          <div class="nested-table">
+            <div class="nested-table">
             <div class="nested-header">
-                <h3>Rules (Channel Params)</h3>
-                <el-button size="small" type="primary" @click="addRule(props.row)">Add Rule</el-button>
+                <h3>规则(通道参数)</h3>
+                <el-button size="small" type="primary" @click="addRule(props.row)">添加规则</el-button>
             </div>
             <el-table :data="props.row.rules" border style="width: 100%" size="small">
-              <el-table-column label="Channel" width="220">
+              <el-table-column label="通道" width="220">
                   <template #default="scope">
-                      <el-select v-model="scope.row.channel" size="small" placeholder="Select Channel">
+                      <el-select v-model="scope.row.channel" size="small" placeholder="选择通道">
                           <el-option 
                             v-for="ch in channelOptions" 
                             :key="ch.id" 
@@ -46,13 +46,13 @@
                       </el-select>
                   </template>
               </el-table-column>
-              <el-table-column label="Addition Type" width="140">
+              <el-table-column label="添加类型" width="140">
                   <template #default="scope">
                       <el-select v-model="scope.row.addition_type" size="small">
-                          <el-option label="No Use" :value="0"></el-option>
-                          <el-option label="Required (AND)" :value="1"></el-option>
-                          <el-option label="Optional (OR)" :value="2"></el-option>
-                          <el-option label="Replace" :value="3"></el-option>
+                          <el-option label="不使用" :value="0"></el-option>
+                          <el-option label="必选(AND)" :value="1"></el-option>
+                          <el-option label="可选(OR)" :value="2"></el-option>
+                          <el-option label="替换" :value="3"></el-option>
                       </el-select>
                   </template>
               </el-table-column>
@@ -61,13 +61,13 @@
                       <el-input v-model="scope.row.addition_expr" size="small"></el-input>
                   </template>
               </el-table-column>
-              <el-table-column label="Request Type" width="140">
+              <el-table-column label="请求类型" width="140">
                   <template #default="scope">
                       <el-select v-model="scope.row.request_type" size="small">
-                          <el-option label="No Use" :value="0"></el-option>
-                          <el-option label="Required (AND)" :value="1"></el-option>
-                          <el-option label="Optional (OR)" :value="2"></el-option>
-                          <el-option label="Replace" :value="3"></el-option>
+                          <el-option label="不使用" :value="0"></el-option>
+                          <el-option label="必选(AND)" :value="1"></el-option>
+                          <el-option label="可选(OR)" :value="2"></el-option>
+                          <el-option label="替换" :value="3"></el-option>
                       </el-select>
                   </template>
               </el-table-column>
@@ -76,7 +76,7 @@
                       <el-input v-model="scope.row.request_expr" size="small"></el-input>
                   </template>
               </el-table-column>
-              <el-table-column label="Action" width="80" align="center">
+              <el-table-column label="操作" width="80" align="center">
                   <template #default="scope">
                       <el-button size="small" type="danger" :icon="DeleteFilled" circle @click="deleteRule(props.row, scope.$index)"></el-button>
                   </template>
@@ -92,15 +92,15 @@
         </template>
       </el-table-column>
       
-      <el-table-column prop="desc" label="Description">
+      <el-table-column prop="desc" label="描述">
         <template #default="scope">
            <el-input v-model="scope.row.desc" size="small"></el-input>
         </template>
       </el-table-column>
 
-      <el-table-column prop="mode" label="Mode" width="150">
+      <el-table-column prop="mode" label="模式" width="150">
         <template #default="scope">
-           <el-select v-model="scope.row.mode" size="small" placeholder="Select">
+           <el-select v-model="scope.row.mode" size="small" placeholder="选择">
              <el-option
                v-for="item in modeOptions"
                :key="item.value"
@@ -111,7 +111,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Actions" width="100" align="center">
+      <el-table-column label="操作" width="100" align="center">
         <template #default="scope">
           <el-button size="small" type="danger" :icon="DeleteFilled" circle @click="handleDelete(scope.$index)"></el-button>
         </template>
@@ -201,7 +201,7 @@ const fetchData = async () => {
     }
     tableData.value = Array.isArray(data) ? data : []
   } catch (e) {
-    ElMessage.error('Failed to fetch data')
+    ElMessage.error('加载数据失败')
   } finally {
     loading.value = false
   }
@@ -213,7 +213,7 @@ const addItem = () => {
   
   tableData.value.push({
       id: maxId + 1,
-      desc: 'New Scheme',
+      desc: '新方案',
       mode: 0,
       rules: []
   })
@@ -245,7 +245,7 @@ const saveData = async () => {
   for (let i = 0; i < tableData.value.length; i++) {
       const row = tableData.value[i]
       if (idSet.has(row.id)) {
-          ElMessage.error(`Row ${i + 1}: Duplicate Scheme ID "${row.id}"`)
+          ElMessage.error(`第 ${i + 1} 行: 方案ID重复 "${row.id}"`)
           saving.value = false
           return
       }
@@ -254,9 +254,9 @@ const saveData = async () => {
 
   try {
     await axios.post(endpoint, tableData.value)
-    ElMessage.success('Saved successfully')
+    ElMessage.success('保存成功')
   } catch (e) {
-    ElMessage.error('Failed to save')
+    ElMessage.error('保存失败')
   } finally {
     saving.value = false
   }

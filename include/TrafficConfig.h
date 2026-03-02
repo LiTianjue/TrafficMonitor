@@ -103,7 +103,7 @@ struct RtLaneInfo
 
 	//车道关联的信号灯的编号，状态，持续时长
 	uint8_t		channel;	// 关联的通道
-	uint8_t		status;		// 关联通道的状态
+	uint8_t		status;		// 关联通道的状态 0 未知， 1 绿灯 ，2 红灯 ，3 黄灯
 	uint8_t		carNum;		// 当前车道的车辆数
 };
 typedef std::vector<RtLaneInfo> RtLaneInfoTable;	//车道信息表
