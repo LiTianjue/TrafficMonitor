@@ -53,7 +53,8 @@ build/
 # IDE files
 .vscode/
 .idea/
-DevelopmentPlan/
 
 # Other
 /*.md
+/tags
+/web/web.tar.gz
