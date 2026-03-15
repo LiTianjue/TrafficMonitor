@@ -205,7 +205,7 @@ import axios from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { DeleteFilled } from '@element-plus/icons-vue'
 
-const endpoint = '/TrafficAttrbuteTable'
+const endpoint = '/TrafficAttributeTable'
 const tableData = ref([])
 const loading = ref(false)
 const saving = ref(false)

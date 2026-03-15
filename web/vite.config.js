@@ -26,8 +26,11 @@ export default defineConfig({
       '/TscConfig': 'http://localhost:18080',
       '/DetectorTable': 'http://localhost:18080',
       '/ChannelCtrlTable': 'http://localhost:18080',
-      '/ManualRelateInfoTable': 'http://localhost:18080',
-      '/TrafficAttrbuteTable': 'http://localhost:18080',
+      '/LaneRelateInfoTable': 'http://localhost:18080',
+      '/TSC/DetectorTable': 'http://localhost:18080',
+      '/TSC/ChannelCtrlTable': 'http://localhost:18080',
+      '/TSC/LaneRelateInfoTable': 'http://localhost:18080',
+      '/TrafficAttributeTable': 'http://localhost:18080',
       '/PssSchemeTable': 'http://localhost:18080',
       '/PssTrigerTable': 'http://localhost:18080',
       '/PssRealTimeStatus': 'http://localhost:18080'

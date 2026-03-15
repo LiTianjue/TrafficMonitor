@@ -6,6 +6,7 @@ import ConfigForm from './views/ConfigForm.vue'
 
 import DetectorConfig from './views/DetectorConfig.vue'
 import ChannelConfig from './views/ChannelConfig.vue'
+import LaneConfig from './views/LaneConfig.vue'
 import AttributeConfig from './views/AttributeConfig.vue'
 import SchemeConfig from './views/SchemeConfig.vue'
 import TriggerConfig from './views/TriggerConfig.vue'
@@ -61,9 +62,8 @@ const routes = [
       meta: { requiresAuth: true }
   },
   {
-      path: '/manual',
-      component: ConfigTable,
-      props: { endpoint: '/ManualRelateInfoTable', title: 'Manual Relations' },
+      path: '/lanes',
+      component: LaneConfig,
       meta: { requiresAuth: true }
   }
 ]

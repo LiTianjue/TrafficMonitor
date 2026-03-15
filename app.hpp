@@ -96,16 +96,23 @@ private:
              res.end();
         });
 
-		CROW_ROUTE(app, "/monitor").methods("POST"_method)  ([this](const crow::request &req) {
+	CROW_ROUTE(app, "/monitor").methods("POST"_method)  ([this](const crow::request &req) {
                 if (!is_authenticated(req)) return crow::response(401);
 				QueryParam p;
+				printf("req Body [%s] \n",req.body.c_str());
 				struct_json::from_json(p,req.body);
+				printf("\n query monitor data [%d : %x] from [%d to %d ]\n",p.queryType,p.queryType,p.beginTime,p.endTime);
 				QueryReturnDatas data;
-				data = mock::getQueryData(p);
+				if (p.queryType == 99) {
+					data = mock::getFileSystemnfo(p.beginTime, p.endTime);
+				} else {
+					data = mock::getQueryData(p);
+				}
 				std::string ret;
 				struct_json::to_json(data,ret);
+				printf("[%s]\n",ret.c_str());
 		return std::move(crow::response(200,ret));
-		});
+	});
 	
 		//[1]信号机配置
 		CROW_ROUTE(app, "/TscConfig").methods("POST"_method)  ([this](const crow::request &req) {
@@ -132,19 +139,19 @@ private:
 		});
 
 		//[4] 手动关联
-		CROW_ROUTE(app, "/ManualRelateInfoTable").methods("POST"_method)  ([this](const crow::request &req) {
-			return renderPOST<ManualRelateInfoTable>(req);
+		CROW_ROUTE(app, "/LaneRelateInfoTable").methods("POST"_method)  ([this](const crow::request &req) {
+			return renderPOST<LaneRelateInfoTable>(req);
 		});
-		CROW_ROUTE(app, "/ManualRelateInfoTable").methods("GET"_method)  ([this](const crow::request &req) {
-			return renderGET<ManualRelateInfoTable>(req);
+		CROW_ROUTE(app, "/LaneRelateInfoTable").methods("GET"_method)  ([this](const crow::request &req) {
+			return renderGET<LaneRelateInfoTable>(req);
 		});
 
 		//[5] 属性配置
-		CROW_ROUTE(app, "/TrafficAttrbuteTable").methods("POST"_method)  ([this](const crow::request &req) {
-			return renderPOST<TrafficAttrbuteTable>(req);
+		CROW_ROUTE(app, "/TrafficAttributeTable").methods("POST"_method)  ([this](const crow::request &req) {
+			return renderPOST<TrafficAttributeTable>(req);
 		});
-		CROW_ROUTE(app, "/TrafficAttrbuteTable").methods("GET"_method)  ([this](const crow::request &req) {
-			return renderGET<TrafficAttrbuteTable>(req);
+		CROW_ROUTE(app, "/TrafficAttributeTable").methods("GET"_method)  ([this](const crow::request &req) {
+			return renderGET<TrafficAttributeTable>(req);
 		});
 
 		//[6] 方案配置
@@ -181,13 +188,14 @@ private:
 				std::string data = mock::load<std::vector<DetectorDeviceStatus>>();
 				return std::move(crow::response(200,data));
 		});
-
+#if 0
 		// TscOnlineStatus GET 方法
 		CROW_ROUTE(app, "/TscOnlineStatus").methods("GET"_method)  ([this](const crow::request &req) {
                 if (!is_authenticated(req)) return crow::response(401);
 				std::string data = mock::load<TscOnlineStatus>();
 				return std::move(crow::response(200,data));
 		});
+#endif
 
 		// TSC/DetectorTable GET 方法
 		CROW_ROUTE(app, "/TSC/DetectorTable").methods("GET"_method)  ([this](const crow::request &req) {
@@ -197,6 +205,11 @@ private:
 		// TSC/ChannelCtrlTable GET 方法
 		CROW_ROUTE(app, "/TSC/ChannelCtrlTable").methods("GET"_method)  ([this](const crow::request &req) {
 			return renderGET<ChannelCtrlTable>(req);
+		});
+
+		// TSC/LaneRelateInfoTable GET 方法
+		CROW_ROUTE(app, "/TSC/LaneRelateInfoTable").methods("GET"_method)  ([this](const crow::request &req) {
+			return renderGET<LaneRelateInfoTable>(req);
 		});
 
 		// MonitorKanban GET 方法 - 获取事件日志

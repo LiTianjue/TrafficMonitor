@@ -113,7 +113,7 @@ const fetchData = async () => {
     schemeOptions.value = [tscSelfOption, ...(Array.isArray(schemes) ? schemes : [])]
 
     // Fetch Attributes for Reference
-    const resAttrs = await axios.get('/TrafficAttrbuteTable')
+    const resAttrs = await axios.get('/TrafficAttributeTable')
     let attrs = resAttrs.data
     if (typeof attrs === 'string') {
         try { attrs = JSON.parse(attrs) } catch(e){}

@@ -70,9 +70,9 @@
                 <template #title>触发器配置</template>
             </el-menu-item>
 
-            <el-menu-item index="/manual">
+            <el-menu-item index="/lanes">
                 <el-icon><Operation /></el-icon>
-                <template #title>手动控制</template>
+                <template #title>车道配置</template>
             </el-menu-item>
         </el-sub-menu>
       </el-menu>
@@ -140,7 +140,7 @@ const currentRouteName = computed(() => {
     if (path === '/attributes') return '属性配置'
     if (path === '/schemes') return '方案配置'
     if (path === '/triggers') return '触发器配置'
-    if (path === '/manual') return '手动控制'
+    if (path === '/lanes') return '车道配置'
     return '系统配置'
 })
 

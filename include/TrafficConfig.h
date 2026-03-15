@@ -147,20 +147,24 @@ struct PssRealTimeStatus
 };
 
 //检测器车道和通道的关联信息
-struct ManualRelateInfo
+struct LaneRelateInfo
 {
 	std::string ip;			//检测器配置表中的IP,配置时，下拉可选检测器配置表中的检测器选项展示为(desc(ip)) 
-	int laneNo;				//车道好，取值范围1-8
+	int laneNo;				//车道号，取值范围1-8
+	uint8_t	turn;			//车道转向类型，取值 TurnType
 	uint8_t	channel;		//可选通道配置表中的通道编号
 };
-typedef std::vector<ManualRelateInfo> ManualRelateInfoTable;
+typedef std::vector<LaneRelateInfo> LaneRelateInfoTable;
 
 enum TurnType
 {
-	TURN_UNKNOW = 0x00,	//未知  (0000)
-	TURN_LEFT = 0x01,	//左转  (0001)
-	TURN_STRAIGHT = 0x02,//直行 (0010)
-	TURN_RIGHT = 0x04	//右转  (0100)
+	TURN_UNKNOW				= 0x00,	//未知  (0000)
+	TURN_LEFT				= 0x01,	//左转  (0001)
+	TURN_STRAIGHT			= 0x02,	//直行 (0010)
+	TURN_RIGHT				= 0x04,	//右转  (0100)
+	TURN_LEFT_STRAIGHT		= 0x03,	//左直 (0011)
+	TURN_STRAIGHT_RIGHT		= 0x06,	//右直 (0110)
+	TURN_LEFT_STRAIGHT_RIGHT = 0x07	//左直右 (0111)
 };
 
 /**
@@ -199,7 +203,7 @@ enum class ReturnType {
 };
 
 //交通元素信息
-struct TrafficAttrbute
+struct TrafficAttribute
 {
 	uint8_t id;
 	std::string desc;
@@ -218,7 +222,7 @@ struct TrafficAttrbute
     int 		timeWindowSeconds = 2;	//时间窗口 ，单位秒
     int			returnType;				//返回类型 ， ReturnType
 };
-typedef std::vector<TrafficAttrbute> TrafficAttrbuteTable;		//交通元素配置表
+typedef std::vector<TrafficAttribute> TrafficAttributeTable;		//交通元素配置表
 
 
 
@@ -280,8 +284,8 @@ NAMEDKEY(TscOnlineStatus);
 NAMEDKEY(DetectorTable);
 NAMEDKEY(DetectorStatusTable);
 NAMEDKEY(ChannelCtrlTable);
-NAMEDKEY(ManualRelateInfoTable);
-NAMEDKEY(TrafficAttrbuteTable);
+NAMEDKEY(LaneRelateInfoTable);
+NAMEDKEY(TrafficAttributeTable);
 NAMEDKEY(PssSchemeTable);
 NAMEDKEY(PssTrigerTable);
 
@@ -297,8 +301,8 @@ YLT_REFL(TscOnlineStatus,online,hasError,version,desc);
 YLT_REFL(DetectorDevice,id,desc,dir,ip);
 YLT_REFL(DetectorDeviceStatus,ip,online,hasFault,event);
 YLT_REFL(ChannelCtrl,id,dir,type);
-YLT_REFL(ManualRelateInfo,ip,laneNo,channel);
-YLT_REFL(TrafficAttrbute,id,desc,tag,dataSourceIP,signalLightId,laneId,regionId,laneType,laneTurn,attribute,timeWindowSeconds,returnType);
+YLT_REFL(LaneRelateInfo,ip,laneNo,turn,channel);
+YLT_REFL(TrafficAttribute,id,desc,tag,dataSourceIP,signalLightId,laneId,regionId,laneType,laneTurn,attribute,timeWindowSeconds,returnType);
 YLT_REFL(PssScheme,id,desc,mode,rules);
 YLT_REFL(PssScheme::ChannelParam,channel,addition_type,addition_expr,request_type,request_expr);
 YLT_REFL(PssTriger,id,desc,prio,schemeId,expr);

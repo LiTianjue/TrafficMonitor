@@ -22,7 +22,7 @@
        </el-form-item>
        
         <el-form-item label="控制开关">
-          <el-switch v-model="formData.controlSwitch"></el-switch>
+          <el-switch v-model="formData.controlEnable"></el-switch>
        </el-form-item>
        
        <el-form-item>

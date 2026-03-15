@@ -174,7 +174,7 @@ const fetchChannels = async () => {
 
 const fetchAttributes = async () => {
   try {
-    const res = await axios.get('/TrafficAttrbuteTable')
+    const res = await axios.get('/TrafficAttributeTable')
     let data = res.data
     if (typeof data === 'string') {
         try { data = JSON.parse(data) } catch(e){}
