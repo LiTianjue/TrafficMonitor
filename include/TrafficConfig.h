@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+#include <bitset>
+#include <list>
 
 
 /**
@@ -84,12 +86,20 @@ typedef std::vector<ChannelCtrl> ChannelCtrlTable;		//通道配置表
 //通道实时状态参数
 struct RtChannel
 {
-	uint8_t id;			//通道编号
-	uint8_t dir;		//方向 取值 LaneDirection
-	uint8_t type;		//通道类型 0 = 未定义， 1 = 左转箭头灯，2 = 直行箭头灯， 3 = 右转箭头灯 ， 4 圆盘主灯
-	
-	uint8_t	 status;	 //0 未知， 1 绿灯 ，2 红灯 ，3 黄灯
-	uint16_t durnation;	// 持续时间 秒
+	uint8_t 	id;			//通道编号
+	uint8_t 	cur;		//当前的灯色，只会有绿和INVALID 两种状态，以支持强电检测逻辑
+	uint16_t	countdown;	//倒计时
+	uint16_t	durnation;	// 持续时间 秒
+	uint8_t		dir;		//方向 取值 LaneDirection
+	uint8_t		type;		//通道类型 0 = 未定义， 1 = 左转箭头灯，2 = 直行箭头灯， 3 = 右转箭头灯 ， 4 圆盘主灯
+	uint8_t		status;		//0 未知， 1 绿灯 ，2 红灯 ，3 黄灯
+
+	int 		start_green = 0;	//绿灯的亮起时刻
+	int 		end_green = 0;		//绿灯的熄灭时刻
+	int 		round_durnation = 0;	//绿间隔
+
+	bool 		ctrl_req;	//控制请求
+	bool        ctrl_ret;   //控制结果
 };
 typedef std::vector<RtChannel> RtChannelTable;		//通道实时状态表
 
@@ -100,11 +110,11 @@ struct RtLaneInfo
 	int 		laneNo;
 	uint8_t 	dir;		//LaneDirection
 	uint8_t		turn;		//TurnType 
-
-	//车道关联的信号灯的编号，状态，持续时长
 	uint8_t		channel;	// 关联的通道
+							//
 	uint8_t		status;		// 关联通道的状态 0 未知， 1 绿灯 ，2 红灯 ，3 黄灯
 	uint8_t		carNum;		// 当前车道的车辆数
+	uint16_t	queueLength;	// 排队长度
 };
 typedef std::vector<RtLaneInfo> RtLaneInfoTable;	//车道信息表
 
@@ -123,6 +133,28 @@ enum PssRuleCtrlMode
     PSS_SCHEME_MODE,			//方案模式
     PSS_IDLE_MODE,				//空闲模式
 };
+
+#define MAX_CHANNEL_SIZE 96
+enum StageStatus
+{
+	STAGE_FINISHED 		= 0,	//已结束
+	STAGE_RUNNING		= 1,	//运行中
+	STAGE_TRANSITION	= 2		//过渡中
+};
+
+struct SignalStage
+{
+	//std::bitset<MAX_CHANNEL_SIZE> channel = 0;
+	//std::string channel;		//关联的通道
+	std::vector<uint8_t>		channel;
+	int							start;
+	int							end_t;
+
+	uint8_t 	stat = 0;		//阶段状态，取值枚举 StageStatus
+	uint16_t 	durnation = 0;	//持续的时长
+	uint16_t    green;			//绿灯的时长
+};
+typedef std::list<SignalStage> SignalStageList;
 
 struct PssRule
 {
@@ -144,6 +176,7 @@ struct PssRealTimeStatus
     PssRule			rule;
     RtLaneInfoTable lanes;
     RtChannelTable  channels;
+    SignalStageList stages;
 };
 
 //检测器车道和通道的关联信息
@@ -292,6 +325,7 @@ NAMEDKEY(PssTrigerTable);
 NAMEDKEY(RtChannelTable);
 NAMEDKEY(RtLaneInfoTable);
 NAMEDKEY(PssRealTimeStatus);
+NAMEDKEY(SignalStageList);
 
 #include "ylt/struct_json/json_reader.h"
 #include "ylt/struct_json/json_writer.h"
@@ -308,10 +342,11 @@ YLT_REFL(PssScheme::ChannelParam,channel,addition_type,addition_expr,request_typ
 YLT_REFL(PssTriger,id,desc,prio,schemeId,expr);
 
 
-YLT_REFL(PssRealTimeStatus,utc,rule,lanes,channels);
+YLT_REFL(PssRealTimeStatus,utc,rule,lanes,channels,stages);
 YLT_REFL(PssRule,ctrlType,ctrlMode,ctrlId,triggerId,desc,boottime,updatetime,durnation,left);
-YLT_REFL(RtLaneInfo,ip,laneNo,dir,turn,channel,status,carNum);
-YLT_REFL(RtChannel,id,dir,type,status,durnation);
+YLT_REFL(RtLaneInfo,ip,laneNo,dir,turn,channel,status,carNum,queueLength);
+YLT_REFL(RtChannel,id,cur,countdown,durnation,dir,type,status,start_green,end_green,round_durnation,ctrl_req,ctrl_ret);
+YLT_REFL(SignalStage,channel,start,end_t,stat,durnation,green);
 
 
 
