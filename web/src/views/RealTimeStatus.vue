@@ -84,20 +84,12 @@
               <span class="label">系统时间:</span>
               <span class="value">{{ formatTime(statusData.utc) }}</span>
             </div>
-            <div class="info-item">
-              <span class="label">UTC时间戳:</span>
-              <span class="value">{{ statusData.utc || '--' }}</span>
-            </div>
           </div>
 
           <el-divider />
 
           <div class="info-section">
             <div class="info-title">规则信息</div>
-            <div class="info-item">
-              <span class="label">规则描述:</span>
-              <span class="value">{{ statusData.rule?.desc || 'N/A' }}</span>
-            </div>
             <div class="info-item">
               <span class="label">控制类型:</span>
               <span class="value">{{ getCtrlTypeLabel(statusData.rule?.ctrlType) }}</span>
@@ -107,12 +99,28 @@
               <span class="value">{{ getCtrlModeLabel(statusData.rule?.ctrlMode) }}</span>
             </div>
             <div class="info-item">
-              <span class="label">持续时间:</span>
-              <span class="value">{{ statusData.rule?.durnation || 0 }}s</span>
+              <span class="label">规则描述:</span>
+              <span class="value">{{ statusData.rule?.desc || 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">触发编号:</span>
+              <span class="value">{{ statusData.rule?.triggerId ?? '--' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">方案编号:</span>
+              <span class="value">{{ statusData.rule?.ctrlId ?? '--' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">启动时间:</span>
+              <span class="value">{{ formatTime(statusData.rule?.boottime) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">持续时长:</span>
+              <span class="value">{{ formatDuration(statusData.rule?.durnation) }}</span>
             </div>
             <div class="info-item highlight">
-              <span class="label">剩余时间:</span>
-              <span class="value time-left">{{ statusData.rule?.left || 0 }}s</span>
+              <span class="label">刷新时间:</span>
+              <span class="value time-left">{{ formatDuration(statusData.rule?.left) }}</span>
             </div>
           </div>
         </el-card>
@@ -221,8 +229,25 @@ const getCtrlTypeLabel = (type) => {
 }
 
 const getCtrlModeLabel = (mode) => {
-  const map = { 0: '系统控制模式', 1: '方案模式', 2: '空闲模式' }
+  const map = { 0: '信号机自控', 1: '智能感应', 2: '智能半感应', 3: '专家模式', 4: '方案模式' }
   return map[mode] || '未知'
+}
+
+const formatDuration = (seconds) => {
+  if (!seconds || seconds <= 0) return '0秒'
+  if (seconds < 60) return `${seconds}秒`
+  if (seconds < 3600) {
+    const min = Math.floor(seconds / 60)
+    const sec = seconds % 60
+    return sec > 0 ? `${min}分${sec}秒` : `${min}分`
+  }
+  const hour = Math.floor(seconds / 3600)
+  const min = Math.floor((seconds % 3600) / 60)
+  const sec = seconds % 60
+  let result = `${hour}小时`
+  if (min > 0) result += `${min}分`
+  if (sec > 0) result += `${sec}秒`
+  return result
 }
 </script>
 
@@ -340,13 +365,14 @@ const getCtrlModeLabel = (mode) => {
 
 .info-item {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin-bottom: 10px;
   font-size: 14px;
 }
 
 .info-item .label {
   color: #606266;
+  min-width: 70px;
 }
 
 .info-item .value {

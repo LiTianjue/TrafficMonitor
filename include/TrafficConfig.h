@@ -125,13 +125,7 @@ enum PssRuleCtrlType
     PSS_CLIENT_CONTROL,			//客户端控制
     PSS_WEB_CONTROL,			//WEB客户端控制
     PSS_PLATFORM_CONTROL,		//平台控制
-};
-
-enum PssRuleCtrlMode
-{
-    PSS_SYSTEM_MODE = 0,		//系统控制模式
-    PSS_SCHEME_MODE,			//方案模式
-    PSS_IDLE_MODE,				//空闲模式
+    PSS_ADVANCE_CONTROL,		//高级控制
 };
 
 #define MAX_CHANNEL_SIZE 96
@@ -159,7 +153,7 @@ typedef std::list<SignalStage> SignalStageList;
 struct PssRule
 {
     uint8_t ctrlType = 0;	//控制类型 取值 PssRuleCtrlType
-    uint8_t ctrlMode = 0;	//控制模式 取值 PssRuleCtrlMode
+    uint8_t ctrlMode = 0;	//运行模式 取值 PssCtrlMode
     uint8_t	ctrlId = 0;		//控制编号
     uint8_t	triggerId = 0;	//触发编号
 
@@ -275,7 +269,8 @@ enum PssCtrlMode
 	TscSelfCtrlMode = 0,		//信号机自控
 	MotorInductionMode = 1,		//智能感应
 	MotorHalfInductionMode = 2,	//智能半感应
-	ExpertMode = 3				//专家模式 
+	ExpertMode = 3,			//专家模式
+	PSS_SCHEME_MODE = 4,		//方案模式
 };
 struct PssScheme
 {

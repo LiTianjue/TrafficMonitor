@@ -9,7 +9,7 @@ namespace mock {
         auto &rule = rts.rule;
         rule.desc = "测试控制模式";
         rule.ctrlType = PSS_LOCAL_CONTROL;
-        rule.ctrlMode = PSS_SCHEME_MODE;
+        rule.ctrlMode = PssCtrlMode::PSS_SCHEME_MODE;
         rule.ctrlId = 2;
         rule.boottime = time(NULL) - 100;
         rule.durnation = 100 + rts.utc % 100;
