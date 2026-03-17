@@ -90,6 +90,23 @@
             </el-breadcrumb>
         </div>
         <div class="navbar-right">
+            <el-button-group class="config-buttons">
+                <el-button size="small" @click="handleExportConfig">
+                    <el-icon><Download /></el-icon>
+                    导出
+                </el-button>
+                <el-button size="small" @click="triggerImport">
+                    <el-icon><Upload /></el-icon>
+                    导入
+                </el-button>
+                <input 
+                    type="file" 
+                    ref="importInput" 
+                    style="display: none" 
+                    accept=".json"
+                    @change="handleImportConfig"
+                />
+            </el-button-group>
             <el-dropdown trigger="click" @command="handleCommand">
                 <div class="avatar-wrapper">
                     <span class="username">管理员</span>
@@ -119,15 +136,18 @@
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+import { ElMessage, ElLoading } from 'element-plus'
 import { 
     Odometer, VideoPlay, DataLine, Tools, Setting, Aim, Connection, 
-    Document, Files, SwitchButton, Operation, Expand, Fold, CaretBottom 
+    Document, Files, SwitchButton, Operation, Expand, Fold, CaretBottom,
+    Download, Upload
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
 const isLoginPage = computed(() => route.path === '/login')
 const isCollapse = ref(false)
+const importInput = ref(null)
 
 const currentRouteName = computed(() => {
     const path = route.path
@@ -157,6 +177,89 @@ const handleCommand = (command) => {
 const logout = async () => {
   await axios.post('/api/logout')
   router.push('/login')
+}
+
+const configKeys = [
+  { key: 'TscConfig', getUrl: '/TscConfig', setUrl: '/TscConfig' },
+  { key: 'DetectorTable', getUrl: '/DetectorTable', setUrl: '/DetectorTable' },
+  { key: 'ChannelCtrlTable', getUrl: '/ChannelCtrlTable', setUrl: '/ChannelCtrlTable' },
+  { key: 'LaneRelateInfoTable', getUrl: '/LaneRelateInfoTable', setUrl: '/LaneRelateInfoTable' },
+  { key: 'TrafficAttributeTable', getUrl: '/TrafficAttributeTable', setUrl: '/TrafficAttributeTable' },
+  { key: 'PssSchemeTable', getUrl: '/PssSchemeTable', setUrl: '/PssSchemeTable' },
+  { key: 'PssTrigerTable', getUrl: '/PssTrigerTable', setUrl: '/PssTrigerTable' }
+]
+
+const handleExportConfig = async () => {
+  try {
+    const exportData = {}
+    for (const config of configKeys) {
+      const res = await axios.get(config.getUrl)
+      let data = res.data
+      if (typeof data === 'string') {
+        try { data = JSON.parse(data) } catch(e) {}
+      }
+      exportData[config.key] = data
+    }
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `traffic_config_${Date.now()}.json`
+    link.click()
+    URL.revokeObjectURL(url)
+    ElMessage.success('配置导出成功')
+  } catch (error) {
+    console.error('Export config failed:', error)
+    ElMessage.error('配置导出失败')
+  }
+}
+
+const triggerImport = () => {
+  importInput.value?.click()
+}
+
+const handleImportConfig = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+  
+  try {
+    const text = await file.text()
+    const importData = JSON.parse(text)
+    
+    const loading = ElLoading.service({
+      lock: true,
+      text: '正在导入配置...',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
+    
+    let successCount = 0
+    let failCount = 0
+    
+    for (const config of configKeys) {
+      if (importData[config.key] !== undefined) {
+        try {
+          await axios.post(config.setUrl, importData[config.key])
+          successCount++
+        } catch (e) {
+          console.error(`Import ${config.key} failed:`, e)
+          failCount++
+        }
+      }
+    }
+    
+    loading.close()
+    
+    if (failCount === 0) {
+      ElMessage.success(`配置导入成功，共导入 ${successCount} 项`)
+    } else {
+      ElMessage.warning(`导入完成，成功 ${successCount} 项，失败 ${failCount} 项`)
+    }
+  } catch (error) {
+    console.error('Import config failed:', error)
+    ElMessage.error('配置导入失败：文件格式错误')
+  }
+  
+  event.target.value = ''
 }
 </script>
 
@@ -229,6 +332,17 @@ body {
 .navbar-right {
     display: flex;
     align-items: center;
+    gap: 15px;
+}
+
+.config-buttons .el-button {
+    background-color: transparent;
+    border-color: transparent;
+    color: #606266;
+}
+
+.config-buttons .el-button:hover {
+    color: #409eff;
 }
 
 .avatar-wrapper {
