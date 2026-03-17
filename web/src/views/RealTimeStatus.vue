@@ -119,13 +119,15 @@
       </div>
     </div>
 
-    <!-- Bottom: Reserved Area -->
-    <div class="reserved-area">
-      <div class="reserved-left">
-        <span class="reserved-label">预留</span>
-      </div>
-      <div class="reserved-right">
-        <span class="reserved-label">预留</span>
+    <!-- Bottom: Stages Area -->
+    <div class="stages-area">
+      <div class="stages-list">
+        <StageCard 
+          v-for="(stage, index) in statusData.stages" 
+          :key="index"
+          :stage="stage"
+          :channels="statusData.channels"
+        />
       </div>
     </div>
   </div>
@@ -135,12 +137,14 @@
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import axios from 'axios'
 import DirectionLane from '../components/DirectionLane.vue'
+import StageCard from '../components/StageCard.vue'
 
 const statusData = ref({
   utc: 0,
   rule: {},
   lanes: [],
-  channels: []
+  channels: [],
+  stages: []
 })
 
 const options = reactive({
@@ -251,7 +255,7 @@ const getCtrlModeLabel = (mode) => {
 }
 
 .intersection-area {
-  flex: 4;
+  flex: 3.5;
   background-color: #1a1a1a;
   border-radius: 8px;
   display: flex;
@@ -308,7 +312,7 @@ const getCtrlModeLabel = (mode) => {
 }
 
 .info-panel {
-  flex: 2;
+  flex: 2.3;
 }
 
 .info-card {
@@ -384,5 +388,23 @@ const getCtrlModeLabel = (mode) => {
 .reserved-label {
   color: #999;
   font-size: 14px;
+}
+
+.stages-area {
+  flex-shrink: 0;
+  height: 135px;
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.stages-list {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  align-items: center;
 }
 </style>

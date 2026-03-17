@@ -146,7 +146,7 @@ struct SignalStage
 {
 	//std::bitset<MAX_CHANNEL_SIZE> channel = 0;
 	//std::string channel;		//关联的通道
-	std::vector<uint8_t>		channel;
+	std::vector<uint8_t>		channels;
 	int							start;
 	int							end_t;
 
@@ -346,7 +346,7 @@ YLT_REFL(PssRealTimeStatus,utc,rule,lanes,channels,stages);
 YLT_REFL(PssRule,ctrlType,ctrlMode,ctrlId,triggerId,desc,boottime,updatetime,durnation,left);
 YLT_REFL(RtLaneInfo,ip,laneNo,dir,turn,channel,status,carNum,queueLength);
 YLT_REFL(RtChannel,id,cur,countdown,durnation,dir,type,status,start_green,end_green,round_durnation,ctrl_req,ctrl_ret);
-YLT_REFL(SignalStage,channel,start,end_t,stat,durnation,green);
+YLT_REFL(SignalStage,channels,start,end_t,stat,durnation,green);
 
 
 

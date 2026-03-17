@@ -137,7 +137,7 @@ namespace mock
 
 				_step += 15*60;
 			}
-			printf("cnt %ld \n",cnt);
+			//printf("cnt %ld \n",cnt);
 			ret.tables.push_back(std::move(table));
 		}
 		return ret;
