@@ -211,11 +211,21 @@ const addItem = () => {
   let maxId = 0
   tableData.value.forEach(item => { if (item.id > maxId) maxId = item.id })
   
+  const sortedChannels = [...channelOptions.value].sort((a, b) => a.id - b.id)
+  
+  const defaultRules = sortedChannels.map(ch => ({
+    channel: ch.id,
+    addition_type: 0,
+    addition_expr: '',
+    request_type: 0,
+    request_expr: ''
+  }))
+  
   tableData.value.push({
       id: maxId + 1,
       desc: '新方案',
       mode: 0,
-      rules: []
+      rules: defaultRules
   })
 }
 
