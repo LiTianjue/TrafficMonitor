@@ -113,6 +113,24 @@ private:
 				printf("[%s]\n",ret.c_str());
 		return std::move(crow::response(200,ret));
 	});
+
+	CROW_ROUTE(app, "/MonitorData").methods("POST"_method)  ([this](const crow::request &req) {
+                if (!is_authenticated(req)) return crow::response(401);
+				QueryParam p;
+				printf("req Body [%s] \n",req.body.c_str());
+				struct_json::from_json(p,req.body);
+				printf("\n query MonitorData [%d : %x] from [%d to %d ]\n",p.queryType,p.queryType,p.beginTime,p.endTime);
+				QueryReturnDatas data;
+				if (p.queryType == 99) {
+					data = mock::getFileSystemnfo(p.beginTime, p.endTime);
+				} else {
+					data = mock::getQueryData(p);
+				}
+				std::string ret;
+				struct_json::to_json(data,ret);
+				printf("[%s]\n",ret.c_str());
+		return std::move(crow::response(200,ret));
+	});
 	
 		//[1]信号机配置
 		CROW_ROUTE(app, "/TscConfig").methods("POST"_method)  ([this](const crow::request &req) {

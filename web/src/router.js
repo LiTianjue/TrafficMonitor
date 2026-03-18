@@ -12,6 +12,7 @@ import SchemeConfig from './views/SchemeConfig.vue'
 import TriggerConfig from './views/TriggerConfig.vue'
 import RealTimeStatus from './views/RealTimeStatus.vue'
 import MonitorQuery from './views/MonitorQuery.vue'
+import OperationQuery from './views/OperationQuery.vue'
 import TscConfig from './views/TscConfig.vue'
 
 const routes = [
@@ -24,6 +25,11 @@ const routes = [
   {
     path: '/monitor',
     component: MonitorQuery,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/operation',
+    component: OperationQuery,
     meta: { requiresAuth: true }
   },
   { 
