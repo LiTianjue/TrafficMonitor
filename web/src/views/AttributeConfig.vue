@@ -23,7 +23,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="dataSourceIP" label="数据源IP" width="150">
+      <el-table-column prop="dataSourceIP" label="数据源IP" width="180">
         <template #default="scope">
           <el-select 
             v-model="scope.row.dataSourceIP" 
@@ -34,10 +34,10 @@
           >
             <el-option label="未定义" :value="''" />
             <el-option 
-              v-for="ip in detectorIPs" 
-              :key="ip" 
-              :label="ip" 
-              :value="ip" 
+              v-for="det in detectorList" 
+              :key="det.ip" 
+              :label="getDetectorLabel(det)" 
+              :value="det.ip" 
             />
           </el-select>
         </template>
@@ -211,7 +211,12 @@ const loading = ref(false)
 const saving = ref(false)
 
 const detectorIPs = ref([])
+const detectorList = ref([])
 const channelList = ref([])
+
+const getDetectorLabel = (detector) => {
+  return detector.desc ? `${detector.desc}-${detector.ip}` : detector.ip
+}
 
 const getChannelLabel = (channel) => {
   const dirLabels = { 1: '东', 2: '南', 3: '西', 4: '北', 5: '其他' }
@@ -267,7 +272,8 @@ const fetchDetectorIPs = async () => {
       try { data = JSON.parse(data) } catch(e) {}
     }
     if (Array.isArray(data)) {
-      detectorIPs.value = data.map(d => d.desc ? `${d.desc}-${d.ip}` : d.ip)
+      detectorList.value = data
+      detectorIPs.value = data.map(d => d.ip)
     }
   } catch (e) {
     console.error('Failed to fetch detectors', e)
@@ -299,6 +305,7 @@ const fetchData = async () => {
     }
     tableData.value = Array.isArray(data) ? data.map(item => ({
       ...item,
+      dataSourceIP: isValidIP(item.dataSourceIP) ? item.dataSourceIP : '',
       loading: false,
       tagStatus: 'pending',
       tagValue: undefined
@@ -308,6 +315,14 @@ const fetchData = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const isValidIP = (ip) => {
+  if (!ip || ip === '') return true
+  if (typeof ip !== 'string') return false
+  const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/
+  if (!ipRegex.test(ip)) return false
+  return detectorIPs.value.includes(ip)
 }
 
 const renumberIds = () => {
