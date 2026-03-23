@@ -13,6 +13,7 @@ import TriggerConfig from './views/TriggerConfig.vue'
 import RealTimeStatus from './views/RealTimeStatus.vue'
 import MonitorQuery from './views/MonitorQuery.vue'
 import OperationQuery from './views/OperationQuery.vue'
+import TrafficStaticQuery from './views/TrafficStaticQuery.vue'
 import TscConfig from './views/TscConfig.vue'
 
 const routes = [
@@ -30,6 +31,11 @@ const routes = [
   {
     path: '/operation',
     component: OperationQuery,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/traffic-static',
+    component: TrafficStaticQuery,
     meta: { requiresAuth: true }
   },
   { 

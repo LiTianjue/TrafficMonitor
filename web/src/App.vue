@@ -44,6 +44,11 @@
                 <el-icon><Cpu /></el-icon>
                 <template #title>运维信息查询</template>
             </el-menu-item>
+
+            <el-menu-item index="/traffic-static">
+                <el-icon><DataAnalysis /></el-icon>
+                <template #title>交通统计数据查询</template>
+            </el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu index="/config">
@@ -152,7 +157,7 @@ import { ElMessage, ElLoading } from 'element-plus'
 import { 
     Odometer, VideoPlay, DataLine, Tools, Setting, Aim, Connection, 
     Document, Files, SwitchButton, Operation, Expand, Fold, CaretBottom,
-    Download, Upload, InfoFilled, Cpu
+    Download, Upload, InfoFilled, Cpu, DataAnalysis
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
@@ -167,6 +172,7 @@ const currentRouteName = computed(() => {
     if (path === '/realtime') return '实时状态'
     if (path === '/monitor') return '监控查询'
     if (path === '/operation') return '运维信息查询'
+    if (path === '/traffic-static') return '交通统计数据查询'
     if (path === '/tsc') return '信号机配置'
     if (path === '/detectors') return '检测器配置'
     if (path === '/channels') return '通道配置'
