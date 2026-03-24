@@ -98,7 +98,7 @@ import * as echarts from 'echarts'
 import { ElMessage } from 'element-plus'
 
 const statisticsAttributes = [
-  { value: 512, label: '总流量' },
+  { value: 513, label: '总流量' },
   { value: 514, label: '直行总流量' },
   { value: 515, label: '左转总流量' },
   { value: 516, label: '右转总流量' },

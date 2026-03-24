@@ -14,6 +14,7 @@ import RealTimeStatus from './views/RealTimeStatus.vue'
 import MonitorQuery from './views/MonitorQuery.vue'
 import OperationQuery from './views/OperationQuery.vue'
 import TrafficStaticQuery from './views/TrafficStaticQuery.vue'
+import TrafficAttributeQuery from './views/TrafficAttributeQuery.vue'
 import TscConfig from './views/TscConfig.vue'
 
 const routes = [
@@ -36,6 +37,11 @@ const routes = [
   {
     path: '/traffic-static',
     component: TrafficStaticQuery,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/traffic-attribute-query',
+    component: TrafficAttributeQuery,
     meta: { requiresAuth: true }
   },
   { 

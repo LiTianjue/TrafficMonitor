@@ -1,4 +1,5 @@
 #include "monitor_type.h"
+#include "TrafficConfig.h"
 
 
 namespace mock
@@ -141,6 +142,34 @@ namespace mock
 			ret.tables.push_back(std::move(table));
 		}
 		return ret;
+	}
+
+	TagQueryResult getTagQueryData(TagQueryParam &p)
+	{
+		TagQueryResult result;
+		result.beginTime = p.beginTime;
+		result.endTime = p.endTime;
+		result.queryStrings = p.queryStrings;
+		result.desc = "标签数据查询";
+		result.unit = "";
+
+		for (const auto &tag : p.queryStrings) {
+			TagQueryResult::Table table;
+			table.name = tag;
+
+			uint64_t time = p.beginTime;
+			while (time <= p.endTime) {
+				TagQueryResult::Data d;
+				d.timestamp = time;
+				d.value = rand() % 1000;
+				d.flag = 0;
+				table.datas.push_back(d);
+				time += 300;
+			}
+			result.tables.push_back(table);
+		}
+
+		return result;
 	}
 
 

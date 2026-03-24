@@ -288,6 +288,25 @@ private:
 				
 				return std::move(crow::response(200, response));
 		});
+
+		CROW_ROUTE(app, "/TrafficAttributeQuery").methods("POST"_method)
+		([this](const crow::request &req) {
+			if (!is_authenticated(req)) return crow::response(401);
+			TagQueryParam p;
+			printf("req Body [%s] \n", req.body.c_str());
+			struct_json::from_json(p, req.body);
+			printf("\n query tag data from [%lu to %lu], tags: ", p.beginTime, p.endTime);
+			for (const auto &tag : p.queryStrings) {
+				printf("%s ", tag.c_str());
+			}
+			printf("\n");
+
+			TagQueryResult result = mock::getTagQueryData(p);
+			std::string ret;
+			struct_json::to_json(result, ret);
+			//printf("[%s]\n", ret.c_str());
+			return std::move(crow::response(200, ret));
+		});
 	}
 	
 private:

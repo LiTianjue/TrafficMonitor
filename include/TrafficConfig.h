@@ -306,7 +306,43 @@ typedef std::vector<PssTriger> PssTrigerTable;		//触发规则表
 
 
 
+// 标签查询参数结构
+struct TagQueryParam
+{
+    uint64_t beginTime;
+    uint64_t endTime;
+    std::vector<std::string> queryStrings;  // 一个或多个tag
+};
+
+// 标签查询结果结构
+struct TagQueryResult
+{
+    uint64_t beginTime;
+    uint64_t endTime;
+    std::vector<std::string> queryStrings;  // 一个或多个tag，和输入一致
+    std::string desc;  // 描述信息
+
+    struct Data
+    {
+        uint64_t timestamp;  // 时间戳utc
+        uint64_t value;      // 数据值
+        uint8_t flag = 0;    // 数据标记，0表示正常
+    };
+
+    struct Table
+    {
+        std::string name;        // tag 名称
+        std::vector<Data> datas; // 数据
+    };
+
+    std::string unit;  // 数据值的单位
+    std::vector<Table> tables;  // 数据表
+};
+
+
 #include "include/namedkey.h"
+NAMEDKEY(TagQueryParam);
+NAMEDKEY(TagQueryResult);
 NAMEDKEY(TscConfig);
 NAMEDKEY(TscOnlineStatus);
 NAMEDKEY(DetectorTable);
@@ -336,6 +372,11 @@ YLT_REFL(PssScheme,id,desc,mode,rules);
 YLT_REFL(PssScheme::ChannelParam,channel,addition_type,addition_expr,request_type,request_expr);
 YLT_REFL(PssTriger,id,desc,prio,schemeId,expr);
 
+
+YLT_REFL(TagQueryParam,beginTime,endTime,queryStrings);
+YLT_REFL(TagQueryResult,beginTime,endTime,queryStrings,desc,unit,tables);
+YLT_REFL(TagQueryResult::Data,timestamp,value,flag);
+YLT_REFL(TagQueryResult::Table,name,datas);
 
 YLT_REFL(PssRealTimeStatus,utc,rule,lanes,channels,stages);
 YLT_REFL(PssRule,ctrlType,ctrlMode,ctrlId,triggerId,desc,boottime,updatetime,durnation,left);
