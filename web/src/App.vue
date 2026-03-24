@@ -89,7 +89,7 @@
 
             <el-menu-item index="/triggers">
                 <el-icon><SwitchButton /></el-icon>
-                <template #title>触发器配置</template>
+                <template #title>场景识别配置</template>
             </el-menu-item>
 
             <el-menu-item index="/lanes">
@@ -184,7 +184,7 @@ const currentRouteName = computed(() => {
     if (path === '/channels') return '通道配置'
     if (path === '/attributes') return '属性配置'
     if (path === '/schemes') return '方案配置'
-    if (path === '/triggers') return '触发器配置'
+    if (path === '/triggers') return '场景识别配置'
     if (path === '/lanes') return '车道配置'
     return '系统配置'
 })

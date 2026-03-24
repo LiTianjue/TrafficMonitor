@@ -1,15 +1,15 @@
 <template>
   <div class="login-container">
     <el-card class="login-card">
-      <h2>Traffic Monitor</h2>
+      <h2>信号智能终端</h2>
       <el-form :model="form" @submit.prevent="login">
         <el-form-item>
-          <el-input v-model="form.username" placeholder="Username"></el-input>
+          <el-input v-model="form.username" placeholder="用户名"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="form.password" type="password" placeholder="Password"></el-input>
+          <el-input v-model="form.password" type="password" placeholder="密码"></el-input>
         </el-form-item>
-        <el-button type="primary" @click="login" :loading="loading" style="width: 100%">Login</el-button>
+        <el-button type="primary" @click="login" :loading="loading" style="width: 100%">登录</el-button>
       </el-form>
     </el-card>
   </div>
@@ -31,7 +31,7 @@ const login = async () => {
     await axios.post('/api/login', form)
     router.push('/')
   } catch (e) {
-    ElMessage.error('Login failed')
+    ElMessage.error('登录失败')
   } finally {
     loading.value = false
   }

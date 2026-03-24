@@ -18,10 +18,10 @@
     </div>
 
     <div class="header">
-      <h2>触发器配置</h2>
+      <h2>场景识别配置</h2>
       <div>
         <el-button type="success" @click="saveData" :loading="saving">保存修改</el-button>
-        <el-button type="primary" @click="addItem">添加触发器</el-button>
+        <el-button type="primary" @click="addItem">添加场景</el-button>
       </div>
     </div>
 
