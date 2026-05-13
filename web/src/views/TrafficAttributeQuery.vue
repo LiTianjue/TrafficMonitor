@@ -19,9 +19,9 @@
         </el-form-item>
         <el-form-item>
           <el-button-group>
-            <el-button @click="setYesterday">前一天</el-button>
-            <el-button @click="setToday">今天</el-button>
-            <el-button @click="setTomorrow">后一天</el-button>
+            <el-button @click="setBefore10Min">前10分钟</el-button>
+            <el-button @click="setRealtime">实时</el-button>
+            <el-button @click="setAfter10Min">后10分钟</el-button>
           </el-button-group>
         </el-form-item>
         <el-form-item>
@@ -45,16 +45,21 @@
             {{ attr.desc }}({{ attr.tag }})
           </el-checkbox>
         </el-checkbox-group>
-        <el-checkbox v-model="enableCustomTag">
-          自定义标签
+        <div class="custom-tags">
+          <el-checkbox v-model="enableCustomTags">
+            <span>自定义标签</span>
+          </el-checkbox>
           <el-input 
-            v-model="customTagValue" 
-            placeholder="输入tag"
+            v-for="(tag, index) in customTagValues" 
+            :key="index"
+            v-model="customTagValues[index]" 
+            :placeholder="'自定义' + (index + 1)"
             size="small" 
             style="width: 150px; margin-left: 10px;"
+            :disabled="!enableCustomTags"
             @keyup.enter="handleQuery"
           />
-        </el-checkbox>
+        </div>
       </div>
     </el-card>
 
@@ -88,8 +93,8 @@ import { ElMessage } from 'element-plus'
 const form = ref({})
 const timeRange = ref([])
 const selectedTags = ref([])
-const enableCustomTag = ref(false)
-const customTagValue = ref('')
+const enableCustomTags = ref(false)
+const customTagValues = ref(['', '', ''])
 const attributeList = ref([])
 const displayMode = ref('separate')
 
@@ -107,39 +112,38 @@ const initCharts = () => {
 }
 
 const initTimeRange = () => {
+  setRealtime()
+}
+
+const MIN_10 = 10 * 60
+
+const setRealtime = () => {
   const now = new Date()
-  const start = new Date(now)
-  start.setTime(start.getTime() - 24 * 60 * 60 * 1000)
-  
-  const startSec = Math.floor(start.getTime() / 1000)
   const endSec = Math.floor(now.getTime() / 1000)
+  const startSec = endSec - MIN_10
   timeRange.value = [startSec, endSec]
 }
 
-const setYesterday = () => {
-  if (!timeRange.value || timeRange.value.length < 2) return
-  const DAY_24H = 24 * 60 * 60
+const setBefore10Min = () => {
+  if (!timeRange.value || timeRange.value.length < 2) {
+    setRealtime()
+    return
+  }
   timeRange.value = [
-    timeRange.value[0] - DAY_24H,
-    timeRange.value[1] - DAY_24H
+    timeRange.value[0] - MIN_10,
+    timeRange.value[1] - MIN_10
   ]
 }
 
-const setTomorrow = () => {
-  if (!timeRange.value || timeRange.value.length < 2) return
-  const DAY_24H = 24 * 60 * 60
+const setAfter10Min = () => {
+  if (!timeRange.value || timeRange.value.length < 2) {
+    setRealtime()
+    return
+  }
   timeRange.value = [
-    timeRange.value[0] + DAY_24H,
-    timeRange.value[1] + DAY_24H
+    timeRange.value[0] + MIN_10,
+    timeRange.value[1] + MIN_10
   ]
-}
-
-const setToday = () => {
-  const now = new Date()
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const startSec = Math.floor(today.getTime() / 1000)
-  const endSec = Math.floor(now.getTime() / 1000)
-  timeRange.value = [startSec, endSec]
 }
 
 const fetchAttributeList = async () => {
@@ -163,8 +167,12 @@ const handleQuery = async () => {
 
   let tagsToQuery = [...selectedTags.value]
   
-  if (enableCustomTag.value && customTagValue.value.trim()) {
-    tagsToQuery.push(customTagValue.value.trim())
+  if (enableCustomTags.value) {
+    customTagValues.value.forEach(tag => {
+      if (tag && tag.trim()) {
+        tagsToQuery.push(tag.trim())
+      }
+    })
   }
   
   if (tagsToQuery.length === 0) {
@@ -420,6 +428,13 @@ onUnmounted(() => {
 
 .query-tags .el-checkbox {
   margin-right: 0;
+}
+
+.custom-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .chart-container {
